@@ -38,7 +38,6 @@ header section {
     width: 33%;
 }
 
-
 header img:hover {
     transform: rotate(-3deg);
 }
@@ -86,6 +85,7 @@ h2 {
 #gameContainer {
     display: flex;
     justify-content: center;
+    align-items: stretch;
 }
 
 /* GAME BOARD */
@@ -159,4 +159,64 @@ button:hover {
     color: #d67983;
     border-color: #d67983;
     transform: rotate(-3deg);
+}
+
+/* Medium screens */
+@media all and (max-width: 800px) {
+    header {
+        justify-content: space-between;
+    }
+
+    header section:first-of-type {
+        display: none;
+    }
+
+    header a,
+    header section {
+        width: 50%;
+    }
+}
+
+/* Small screens */
+@media all and (max-width: 500px) {
+    header {
+        padding: 5px;
+    }
+    header a img {
+        width: 125px;
+    }
+
+    header section:first-of-type {
+        display: none;
+    }
+
+    #gameContainer {
+        flex-direction: column;
+    }
+
+    .board {
+        padding: 10px;
+        height: auto;
+        min-height: 0;
+    }
+    
+    .board img {
+        width: 70px;
+        height: 70px;
+        margin: 6px;
+    }
+
+    header section:last-of-type {
+        width: auto;
+        border: none;
+    }
+
+    #stars img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .board:nth-of-type(2) {
+        margin-top: 0;
+    }
 }
