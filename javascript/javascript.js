@@ -18,7 +18,7 @@ const   // Game board items
         restartButton = document.getElementById("restartButton"),
         scorebord = document.getElementById("score"),
         starsContainer = document.getElementById("stars"),
-        gameFeedback = document.getElementById("gameFeedback"),
+        timerContainer = document.getElementById("timerContainer"),
         numberOfGameImages = 33, // number of images in images folder to show in game
 
         // Audio
@@ -35,6 +35,7 @@ let gameOver = false;
 let matchingItem;
 let itemsListA = [];
 let itemsListB = [];
+let timeLeft = 0;
 
 // EVENTLISTENERS
 //restartButton.addEventListener("click", resetGame());
@@ -72,6 +73,9 @@ function setGame() {
     // Create images for each item
     createItemImages(itemsListA, "board1");
     createItemImages(itemsListB, "board2");
+
+    // Start de timer voor 2 minuten (120 seconden)
+    startTimer(60);
 }
 
 /**
@@ -127,7 +131,6 @@ function createItemImages(list, boardId) {
         board.appendChild(itemImg);
     });
 }
-
 
 /**
  * FUNCTION: CREATE STARS
@@ -204,4 +207,20 @@ function selectItem() {
         gameEnd("winner");
         winnerSound.play();
     }
+}
+
+function startTimer(duration) {
+    let startTime = Date.now();
+    let endTime = startTime + (duration * 1000);
+
+    const timerInterval = setInterval(() => {
+        let timeLeft = Math.round((endTime - Date.now()) / 1000);
+        if (timeLeft <= 0) {
+            clearInterval(timerInterval);
+            gameEnd("slow");
+        } else {
+            timeStr = timeLeft.toString();
+            timerContainer.innerHTML = "Find the next matching item within <strong>" + timeLeft + " seconds </strong> to earn your next star";
+        }
+    }, 1000);
 }
