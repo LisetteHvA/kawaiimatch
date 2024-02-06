@@ -182,6 +182,6 @@ function selectItem() {
     if (stars == 5) {
         console.log("je wint!");
         winnerSound.play();
-        scorebord.innerText = "Amazing, you got all 5 stars!";
+        scorebord.innerText = "Amazing, you've collected all 5 stars!";
     }
 }
