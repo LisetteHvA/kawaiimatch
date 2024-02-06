@@ -18,6 +18,7 @@ const   // Game board items
         restartButton = document.getElementById("restartButton"),
         scorebord = document.getElementById("score"),
         starsContainer = document.getElementById("stars"),
+        numberOfGameImages = 33, // number of images in images folder to show in game
 
         // Audio
         backgroundSound = new Audio("sounds/background.mp3"),
@@ -101,7 +102,7 @@ function createBoards(numberOfBoards) {
 function createItemsList() {
     let numbers = [];
     while (numbers.length < 8) {
-        let randomNumber = Math.floor(Math.random() * 21); // 21 is the amout files in images folder
+        let randomNumber = Math.floor(Math.random() * numberOfGameImages);
         if (!numbers.includes(randomNumber) 
             && randomNumber != matchingItem
             && !itemsListA.includes(randomNumber)) {
