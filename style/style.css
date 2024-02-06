@@ -18,6 +18,15 @@ body {
     justify-content: space-between;
 }
 
+img {
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 /* HEADER */
 header a img {
     width: 200px;
