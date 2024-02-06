@@ -234,6 +234,10 @@ button:hover {
         height: 35px;
     }
 
+    #stars {
+        margin-right: 10px;
+    }
+
     .board:nth-of-type(2) {
         margin-top: 0;
     }
