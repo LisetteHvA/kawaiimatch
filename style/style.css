@@ -16,7 +16,7 @@ header {
     color: white;
     text-align: center;
     padding: 1em;
-    margin-bottom: 2em;
+    margin-bottom: 1.4em;
 }
 
 footer {
@@ -29,8 +29,8 @@ footer {
 }
 
 h2 {
-    margin-bottom: 20px;
-    font-size: 1.3em;
+    margin-bottom: 10px;
+    font-size: .8em;
     color: #d67983;
 }
 
@@ -85,4 +85,10 @@ button:hover {
     background: white;
     color: #d67983;
     border-color: #d67983;
+}
+
+#stars img {
+    width: 44px;
+    height: 44px;
+    margin: 3px;
 }

@@ -17,6 +17,7 @@ const   // Game board items
         gameContainer = document.getElementById("gameContainer"),
         restartButton = document.getElementById("restartButton"),
         scorebord = document.getElementById("score"),
+        starsContainer = document.getElementById("stars"),
 
         // Audio
         backgroundSound = new Audio("sounds/background.mp3"),
@@ -26,8 +27,7 @@ const   // Game board items
         gameOverSound = new Audio("sounds/gameover.mp3");
 
 // VARIABLES
-let score = 0;
-let lives = 5;
+let stars = 0;
 let gameOver = false;
 let matchingItem;
 let itemsListA = [];
@@ -54,6 +54,9 @@ function setGame() {
     
     // Reset Game
     gameContainer.innerHTML = "";
+
+    // Show stars
+    showStars();
 
     // Choose items
     matchingItem = Math.floor(Math.random() * 22);
@@ -130,6 +133,26 @@ function createItemImages(list, boardId) {
     });
 }
 
+
+/**
+ * FUNCTION: CREATE STARS
+ * This function creates images for the amount of stars
+ */
+function showStars() {
+    starsContainer.innerHTML = "";
+    for (let i = 0; i < stars; i++) {
+        let starImg = document.createElement("img");
+        starImg.src = "site-images/star.png";
+        starsContainer.appendChild(starImg);
+    }
+    if (stars < 1) {
+        let starImg = document.createElement("img");
+        starImg.src = "site-images/stars.png";
+        starsContainer.appendChild(starImg);
+        stars = 0;
+    }
+}
+
 /**
  * FUNCTION: SELECT ITEM
  * When an item is selected it checks if it is correct or wrong.
@@ -139,19 +162,23 @@ function selectItem() {
     // correct item is clicked
     if (this.alt == matchingItem) {
         correctSound.play();
-        score += 10;
-        scorebord.innerText = "(+10) | SCORE: "+ score.toString();
+        stars++;
         setGame();
     // wrong item is clicked
     } else {
         foutSound.play();
-        scorebord.innerText = "(-20) | SCORE: " + score.toString();
-        score -= 20;
+        stars--;
+        showStars();
     }
     // gameOver
-    if (gameOver) {
+    if (stars == 0) {
+        stars = 0;
         gameOverSound.play();
-        resetGame();
+        //resetGame();
         return;
+    }
+    if (stars == 5) {
+        console.log("je wint!");
+        scorebord.innerText = "Amazing, you got all 5 stars!";
     }
 }
