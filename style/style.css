@@ -196,6 +196,10 @@ button:hover {
         margin-top: auto;
     }
 
+    main {
+        margin-bottom: 10px;
+    }
+
     header a {
         width: 140px;
     }
