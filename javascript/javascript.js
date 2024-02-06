@@ -36,7 +36,7 @@ let matchingItem;
 let itemsListA = [];
 let itemsListB = [];
 let timeLeft = 0;
-let timePerLevel = 30; //in seconds
+let timePerLevel = 15; //in seconds
 let timerInterval;
 
 // EVENTLISTENERS
@@ -158,8 +158,11 @@ function showStars() {
  * This function shows the endscreen of the game
  */
 function gameEnd(winnerOrLoser) {
+    clearInterval(timerInterval);
+
     backgroundSound.pause();
     gameContainer.innerHTML = "";
+    gameInfo.innerHTML = "";
 
     // Create board
     createBoards(1);
@@ -229,17 +232,15 @@ function startTimer(duration) {
         let timeLeft = Math.round((endTime - Date.now()) / 1000);
 
         // Play music faster when running out of time.
-        if (timeLeft <= 15) {
+        if (timeLeft <= 6) {
             backgroundSound.playbackRate = 1.3;
-        }
-        if (timeLeft <= 8) {
-            backgroundSound.playbackRate = 1.7;
         }
 
         // Check if there is still time left to play
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             gameEnd("slow");
+            gameOverSound.play();
 
         // Update the timer on the website
         } else {
