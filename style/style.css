@@ -45,16 +45,18 @@ footer {
 }
 
 h1 {
-    font-size: 1.4em;
-    font-weight: 500;
+    font-size: 1.5em;
+    font-weight: 600;
     text-transform: uppercase;
-    color: #29191c;
+    color: #fef280;
+    text-shadow: 2px 2px black;
     margin-bottom: .1em;
 }
 
 h2 {
-    font-size: 1em;
-    color:#0b0809;;
+    font-size: 1.1em;
+    font-weight: 400;
+    color: #fbe5ea;
 }
 
 #gameContainer {
