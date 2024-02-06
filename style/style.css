@@ -75,7 +75,13 @@ footer {
 /* FONTS */
 
 h1 {
-    font-size: 1.5em;
+    font-size: 1.1em;
+    font-weight: 400;
+    color: white;
+}
+
+h2 {
+    font-size: 1.8em;
     font-weight: 600;
     text-transform: uppercase;
     color: #fef280;
@@ -83,10 +89,10 @@ h1 {
     margin-bottom: .1em;
 }
 
-h2 {
-    font-size: 1.1em;
-    font-weight: 400;
-    color: #fbe5ea;
+p {
+    color: #fdf6f8;
+    font-style: italic;
+    font-size: .8em;
 }
 
 /* GAME CONTAINER */

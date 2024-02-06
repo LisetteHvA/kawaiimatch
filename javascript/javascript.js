@@ -188,6 +188,8 @@ function gameEnd(winnerOrLoser) {
  */
 function selectItem() {
     clearInterval(timerInterval);
+    timerContainer.innerHTML = "";
+
     // correct item is clicked
     if (this.alt == matchingItem) {
         correctSound.play();
@@ -242,7 +244,7 @@ function startTimer(duration) {
         // Update the timer on the website
         } else {
             timeStr = timeLeft.toString();
-            timerContainer.innerHTML = "find the next matching item within <strong>" + timeLeft + " seconds </strong> to earn your next star";
+            timerContainer.innerHTML = timeLeft + " seconds";
         }
     }, 1000);
 }
