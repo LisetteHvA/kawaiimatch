@@ -36,6 +36,8 @@ let matchingItem;
 let itemsListA = [];
 let itemsListB = [];
 let timeLeft = 0;
+let timePerLevel = 30; //in seconds
+let timerInterval;
 
 // EVENTLISTENERS
 //restartButton.addEventListener("click", resetGame());
@@ -75,7 +77,7 @@ function setGame() {
     createItemImages(itemsListB, "board2");
 
     // Start de timer voor 2 minuten (120 seconden)
-    startTimer(60);
+    startTimer(timePerLevel);
 }
 
 /**
@@ -159,19 +161,19 @@ function gameEnd(winnerOrLoser) {
     backgroundSound.pause();
     gameContainer.innerHTML = "";
 
-    // Maak board
+    // Create board
     createBoards(1);
     let board = document.getElementById("board1");
     board.id = "endBoard";
 
-    // Voeg plaatje toe aan board
+    // Add images to board
     let endImage = document.createElement("img");
     endImage.src = "site-images/"+ winnerOrLoser +".gif";
     endBoard.appendChild(endImage);
     endImage.addEventListener("mouseover", () =>{hoverSound.play();});
     endImage.addEventListener("click", () =>{window.location.reload();});
 
-    // Voeg tekst toe aan board
+    // Add text to board
     let playAgainButton = document.createElement("button");
     playAgainButton.innerText = "Play Again!";
     endBoard.appendChild(playAgainButton);
@@ -185,6 +187,7 @@ function gameEnd(winnerOrLoser) {
  * It updates the scorebord and lives.
  */
 function selectItem() {
+    clearInterval(timerInterval);
     // correct item is clicked
     if (this.alt == matchingItem) {
         correctSound.play();
@@ -203,24 +206,43 @@ function selectItem() {
         gameOverSound.play();
         return;
     }
+     // winner
     if (stars == 5) {
         gameEnd("winner");
         winnerSound.play();
     }
 }
 
+/**
+ * FUNCTION: START TIMER
+ * Sets timer for 'duration' minutes.
+ * If the time is up, the game is over.
+ */
 function startTimer(duration) {
+    timerContainer.innerHTML = "";
     let startTime = Date.now();
     let endTime = startTime + (duration * 1000);
 
-    const timerInterval = setInterval(() => {
+    timerInterval = setInterval(() => {
         let timeLeft = Math.round((endTime - Date.now()) / 1000);
+
+        // Play music faster when running out of time.
+        if (timeLeft <= 15) {
+            backgroundSound.playbackRate = 1.3;
+        }
+        if (timeLeft <= 8) {
+            backgroundSound.playbackRate = 1.7;
+        }
+
+        // Check if there is still time left to play
         if (timeLeft <= 0) {
             clearInterval(timerInterval);
             gameEnd("slow");
+
+        // Update the timer on the website
         } else {
             timeStr = timeLeft.toString();
-            timerContainer.innerHTML = "Find the next matching item within <strong>" + timeLeft + " seconds </strong> to earn your next star";
+            timerContainer.innerHTML = "find the next matching item within <strong>" + timeLeft + " seconds </strong> to earn your next star";
         }
     }, 1000);
 }
