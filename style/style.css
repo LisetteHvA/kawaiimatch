@@ -197,11 +197,6 @@ button:hover {
         width: 140px;
     }
 
-    footer {
-        position: fixed;
-        bottom: 0;
-    }
-
     header {
         padding: 5px;
     }
