@@ -156,23 +156,22 @@ function gameEnd(winnerOrLoser) {
     backgroundSound.pause();
     gameContainer.innerHTML = "";
 
-    console.log(winnerOrLoser)
-    // maak board
+    // Maak board
     createBoards(1);
     let board = document.getElementById("board1");
-    board.id = "winnerBoard";
+    board.id = "endBoard";
 
     // Voeg plaatje toe aan board
     let endImage = document.createElement("img");
     endImage.src = "site-images/"+ winnerOrLoser +".gif";
-    winnerBoard.appendChild(endImage);
+    endBoard.appendChild(endImage);
     endImage.addEventListener("mouseover", () =>{hoverSound.play();});
     endImage.addEventListener("click", () =>{window.location.reload();});
 
     // Voeg tekst toe aan board
     let playAgainButton = document.createElement("button");
     playAgainButton.innerText = "Play Again!";
-    winnerBoard.appendChild(playAgainButton);
+    endBoard.appendChild(playAgainButton);
     playAgainButton.addEventListener("mouseover", () =>{hoverSound.play();});
     playAgainButton.addEventListener("click", () =>{window.location.reload();});
 }
