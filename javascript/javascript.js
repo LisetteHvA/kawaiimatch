@@ -149,21 +149,25 @@ function showStars() {
 }
 
 /**
- * FUNCTION: WINNER
- * This function creates images for the amount of stars
+ * FUNCTION: GAME END
+ * This function shows the endscreen of the game
  */
-function gameWinner() {
+function gameEnd(winnerOrLoser) {
+    backgroundSound.pause();
     gameContainer.innerHTML = "";
 
+    console.log(winnerOrLoser)
     // maak board
     createBoards(1);
     let board = document.getElementById("board1");
     board.id = "winnerBoard";
 
     // Voeg plaatje toe aan board
-    let winnerImage = document.createElement("img");
-    winnerImage.src = "site-images/winner.png";
-    winnerBoard.appendChild(winnerImage);
+    let endImage = document.createElement("img");
+    endImage.src = "site-images/"+ winnerOrLoser +".gif";
+    winnerBoard.appendChild(endImage);
+    endImage.addEventListener("mouseover", () =>{hoverSound.play();});
+    endImage.addEventListener("click", () =>{window.location.reload();});
 
     // Voeg tekst toe aan board
     let playAgainButton = document.createElement("button");
@@ -171,7 +175,6 @@ function gameWinner() {
     winnerBoard.appendChild(playAgainButton);
     playAgainButton.addEventListener("mouseover", () =>{hoverSound.play();});
     playAgainButton.addEventListener("click", () =>{window.location.reload();});
-    winnerSound.play();
 }
 
 /**
@@ -180,7 +183,6 @@ function gameWinner() {
  * It updates the scorebord and lives.
  */
 function selectItem() {
-    stars= 6;
     // correct item is clicked
     if (this.alt == matchingItem) {
         correctSound.play();
@@ -195,11 +197,12 @@ function selectItem() {
     // gameOver
     if (stars == 0) {
         stars = 0;
+        gameEnd("loser");
         gameOverSound.play();
-        //resetGame();
         return;
     }
     if (stars == 5) {
-        gameWinner();
+        gameEnd("winner");
+        winnerSound.play();
     }
 }
