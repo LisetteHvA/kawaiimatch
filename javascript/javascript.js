@@ -18,6 +18,7 @@ const   // Game board items
         restartButton = document.getElementById("restartButton"),
         scorebord = document.getElementById("score"),
         starsContainer = document.getElementById("stars"),
+        gameFeedback = document.getElementById("gameFeedback"),
         numberOfGameImages = 33, // number of images in images folder to show in game
 
         // Audio
@@ -71,14 +72,6 @@ function setGame() {
     // Create images for each item
     createItemImages(itemsListA, "board1");
     createItemImages(itemsListB, "board2");
-}
-
-/**
- * FUNCTION: RESET GAME
- * This function refreshes the page so a new game starts
- */
-function resetGame() {
-    location.reload();
 }
 
 /**
@@ -156,11 +149,38 @@ function showStars() {
 }
 
 /**
+ * FUNCTION: WINNER
+ * This function creates images for the amount of stars
+ */
+function gameWinner() {
+    gameContainer.innerHTML = "";
+
+    // maak board
+    createBoards(1);
+    let board = document.getElementById("board1");
+    board.id = "winnerBoard";
+
+    // Voeg plaatje toe aan board
+    let winnerImage = document.createElement("img");
+    winnerImage.src = "site-images/winner.png";
+    winnerBoard.appendChild(winnerImage);
+
+    // Voeg tekst toe aan board
+    let playAgainButton = document.createElement("button");
+    playAgainButton.innerText = "Play Again!";
+    winnerBoard.appendChild(playAgainButton);
+    playAgainButton.addEventListener("mouseover", () =>{hoverSound.play();});
+    playAgainButton.addEventListener("click", () =>{window.location.reload();});
+    winnerSound.play();
+}
+
+/**
  * FUNCTION: SELECT ITEM
  * When an item is selected it checks if it is correct or wrong.
  * It updates the scorebord and lives.
  */
 function selectItem() {
+    stars= 6;
     // correct item is clicked
     if (this.alt == matchingItem) {
         correctSound.play();
@@ -180,8 +200,6 @@ function selectItem() {
         return;
     }
     if (stars == 5) {
-        console.log("je wint!");
-        winnerSound.play();
-        scorebord.innerText = "Amazing, you've collected all 5 stars!";
+        gameWinner();
     }
 }
