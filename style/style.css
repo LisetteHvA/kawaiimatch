@@ -9,10 +9,12 @@
 body {
     min-height: 100vh;
     background: rgb(255, 211, 218);
+    background-image: url("../site-images/background.png");
+    background-size: cover;
 }
 
 header {
-    background: #d67983;
+    background: #d67983a6;
     color: white;
     text-align: center;
     padding: 1em;
@@ -20,7 +22,7 @@ header {
 }
 
 footer {
-    background: #d67983;
+    background: #d67983a6;
     color: white;
     position: fixed;
     bottom: 0;
@@ -31,7 +33,7 @@ footer {
 h2 {
     margin-bottom: 10px;
     font-size: 1.2em;
-    color: #d67983;
+    color: #d67983f2;
 }
 
 .game {
@@ -44,7 +46,7 @@ h2 {
     width: 500px;
     height: 500px;
     padding: 25px;
-    background-color: white;
+    background-color: #ffffffa6;
     display: flex;
     flex-wrap: wrap;
     justify-content: space-around;
@@ -58,7 +60,7 @@ h2 {
 .game img {
     width: 120px; 
     height: 120px;
-    background-color: pink;
+    background-color: f7dfe0;
     padding: 10px;
     border-radius: 10px;
 }
@@ -66,7 +68,9 @@ h2 {
 .game img:hover, 
 button:hover {
     border: 5px solid #505155;
-    transform: rotate(3deg);
+    transform: rotate(4deg);
+    background-color: #e8ecf9c2;
+    border-color: white;
 }
 
 button {
