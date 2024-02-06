@@ -25,6 +25,7 @@ const   // Game board items
         correctSound = new Audio("sounds/correct.mp3"),
         foutSound = new Audio("sounds/fout.mp3"),
         hoverSound = new Audio("sounds/hover.mp3"),
+        winnerSound = new Audio("sounds/winner.mp3"),
         gameOverSound = new Audio("sounds/gameover.mp3");
 
 // VARIABLES
@@ -180,6 +181,7 @@ function selectItem() {
     }
     if (stars == 5) {
         console.log("je wint!");
+        winnerSound.play();
         scorebord.innerText = "Amazing, you got all 5 stars!";
     }
 }
