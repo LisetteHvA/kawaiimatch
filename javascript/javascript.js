@@ -182,7 +182,6 @@ function gameEnd(winnerOrLoser) {
  * It updates the scorebord and lives.
  */
 function selectItem() {
-    stars = 6;
     // correct item is clicked
     if (this.alt == matchingItem) {
         correctSound.play();

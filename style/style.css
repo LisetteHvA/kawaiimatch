@@ -179,6 +179,20 @@ button:hover {
 
 /* Small screens */
 @media all and (max-width: 500px) {
+    body {
+        min-height: fit-content;
+        background-size: auto;
+    }
+
+    header a {
+        width: 140px;
+    }
+
+    footer {
+        position: fixed;
+        bottom: 0;
+    }
+
     header {
         padding: 5px;
     }
@@ -201,8 +215,8 @@ button:hover {
     }
     
     .board img {
-        width: 70px;
-        height: 70px;
+        width: 80px;
+        height: 80px;
         margin: 6px;
     }
 
@@ -215,7 +229,7 @@ button:hover {
         width: 35px;
         height: 35px;
     }
-    
+
     .board:nth-of-type(2) {
         margin-top: 0;
     }
