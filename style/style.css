@@ -139,19 +139,22 @@ p {
 
 /* END BOARD */
 
-#endBoard {
+#endBoard,
+#startBoard {
     padding: 10px;
     height: auto;
 }
 
-#endBoard img {
+#endBoard img,
+#startBoard img {
     width: 100%;
     height: auto;
     border-radius: 2em;
     margin-bottom: 1em;
 }
 
-#endBoard img:hover {
+#endBoard img:hover,
+#startBoard img:hover {
     transform: rotate(0deg);
 }
 

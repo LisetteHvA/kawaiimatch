@@ -19,78 +19,107 @@ const   // Game board items
         scorebord = document.getElementById("score"),
         starsContainer = document.getElementById("stars"),
         timerContainer = document.getElementById("timerContainer"),
-        numberOfGameImages = 33, // number of images in images folder to show in game
+
+        // Number of images within images folder to show as item
+        numberOfGameImages = 33,
 
         // Audio
         backgroundSound = new Audio("sounds/background.mp3"),
-        correctSound = new Audio("sounds/correct.mp3"),
-        foutSound = new Audio("sounds/fout.mp3"),
         hoverSound = new Audio("sounds/hover.mp3"),
+        correctSound = new Audio("sounds/correct.mp3"),
+        incorrectSound = new Audio("sounds/incorrect.mp3"),
         winnerSound = new Audio("sounds/winner.mp3"),
-        gameOverSound = new Audio("sounds/gameover.mp3");
+        loserSound = new Audio("sounds/loser.mp3"),
+        slowSound = new Audio("sounds/slow.mp3");
 
 // VARIABLES
 let stars = 0;
-let gameOver = false;
+
+// Items
 let matchingItem;
 let itemsListA = [];
 let itemsListB = [];
+
+// Timer
 let timeLeft = 0;
 let timePerLevel = 15; //in seconds
 let timerInterval;
 
-// EVENTLISTENERS
-//restartButton.addEventListener("click", resetGame());
-
+//////////////////// START GAME ///////////////////////
 /**
  * START GAME
  * Games starts when page is loaded.
  */
 window.onload = function() {
-    setGame();
+    startGame();
 }
+
+/**
+ * FUNCTION: START GAME
+ * Creates the game boards
+ */
+function startGame() {
+    createBoard("startBoard");
+    createBoardImage("start", "startBoard", "setGame");
+    createNewButton("Play Game", "startBoard", "setGame");
+}
+
+//////////////////// SET GAME UP ///////////////////////
 
 /**
  * FUNCTION: SET GAME
  * Creates the game boards
  */
 function setGame() {
+    // Empty game container
+    clearElement(gameContainer);
+
     //Play background music
     backgroundSound.play();
-    
-    // Reset Game
-    gameContainer.innerHTML = "";
-
-    // Show stars
-    showStars();
 
     // Choose items
-    matchingItem = Math.floor(Math.random() * 22);
+    matchingItem = pickMatchingItem();
     itemsListA = createItemsList();
     itemsListB = createItemsList();
 
     // Create boards
-    createBoards(2);
+    createBoard("board1");
+    createBoard("board2");
 
-    // Create images for each item
+    // Create images for each item and add to board
     createItemImages(itemsListA, "board1");
     createItemImages(itemsListB, "board2");
 
-    // Start de timer voor 2 minuten (120 seconden)
+    // Set game info
     startTimer(timePerLevel);
+    showStars(); 
+}
+
+/**
+ * FUNCTION: SET GAME
+ * Creates the game boards
+ */
+function clearElement(elementName){
+    elementName.innerHTML = "";
 }
 
 /**
  * FUNCTION: CREATE EMPTY BOARD
  * This function creates the boards
  */
-function createBoards(numberOfBoards) {
-    for (let i = 1; i < numberOfBoards+1; i++) {
-        let board = document.createElement("div");
-        board.id = "board"+i;
-        board.classList.add("board");
-        gameContainer.appendChild(board);
-    }
+function createBoard(boardId) {
+    let board = document.createElement("div");
+    board.id = boardId;
+    board.classList.add("board");
+    gameContainer.appendChild(board);
+}
+
+/**
+ * FUNCTION: PICK MATCHING ITEM
+ * Function selects a random the item that is the match for the round
+ */
+function pickMatchingItem() {
+    return Math.floor(Math.random() * numberOfGameImages);
 }
 
 /**
@@ -134,6 +163,8 @@ function createItemImages(list, boardId) {
     });
 }
 
+//////////////////// STARS ///////////////////////
+
 /**
  * FUNCTION: CREATE STARS
  * This function creates images for the amount of stars
@@ -153,36 +184,7 @@ function showStars() {
     }
 }
 
-/**
- * FUNCTION: GAME END
- * This function shows the endscreen of the game
- */
-function gameEnd(winnerOrLoser) {
-    clearInterval(timerInterval);
-
-    backgroundSound.pause();
-    gameContainer.innerHTML = "";
-    gameInfo.innerHTML = "";
-
-    // Create board
-    createBoards(1);
-    let board = document.getElementById("board1");
-    board.id = "endBoard";
-
-    // Add images to board
-    let endImage = document.createElement("img");
-    endImage.src = "site-images/"+ winnerOrLoser +".gif";
-    endBoard.appendChild(endImage);
-    endImage.addEventListener("mouseover", () =>{hoverSound.play();});
-    endImage.addEventListener("click", () =>{window.location.reload();});
-
-    // Add text to board
-    let playAgainButton = document.createElement("button");
-    playAgainButton.innerText = "Play Again!";
-    endBoard.appendChild(playAgainButton);
-    playAgainButton.addEventListener("mouseover", () =>{hoverSound.play();});
-    playAgainButton.addEventListener("click", () =>{window.location.reload();});
-}
+//////////////////// PLAYING THE GAME ///////////////////////
 
 /**
  * FUNCTION: SELECT ITEM
@@ -190,33 +192,43 @@ function gameEnd(winnerOrLoser) {
  * It updates the scorebord and lives.
  */
 function selectItem() {
+    // Reset timer
     clearInterval(timerInterval);
-    timerContainer.innerHTML = "";
+    clearElement(timerContainer);
 
-    // correct item is clicked
+    // When correct item is clicked
     if (this.alt == matchingItem) {
         correctSound.play();
         stars++;
         setGame();
-    // wrong item is clicked
-    } else {
-        foutSound.play();
+    } 
+    // When wrong item is clicked
+    else {
+        incorrectSound.play();
         stars--;
         showStars();
     }
-    // gameOver
-    if (stars == 0) {
-        stars = 0;
+    getGameStatus();
+}
+
+///////////// GAME STATUS | WINNER/LOSER ////////////////
+
+/**
+ * FUNCTION: CHECK GAME STATUS
+ * Checks if winner/loser
+ */
+function getGameStatus() {
+    if (stars == 0) { // loser
         gameEnd("loser");
-        gameOverSound.play();
-        return;
+        loserSound.play();
     }
-     // winner
-    if (stars == 5) {
+    if (stars == 5) { // winner
         gameEnd("winner");
         winnerSound.play();
     }
 }
+
+//////////////////// TIMER ///////////////////////
 
 /**
  * FUNCTION: START TIMER
@@ -224,28 +236,75 @@ function selectItem() {
  * If the time is up, the game is over.
  */
 function startTimer(duration) {
-    timerContainer.innerHTML = "";
+    clearElement(timerContainer);
     let startTime = Date.now();
     let endTime = startTime + (duration * 1000);
-
     timerInterval = setInterval(() => {
         let timeLeft = Math.round((endTime - Date.now()) / 1000);
-
-        // Play music faster when running out of time.
-        if (timeLeft <= 6) {
-            backgroundSound.playbackRate = 1.3;
-        }
-
-        // Check if there is still time left to play
+        // When there is no time left - end game
         if (timeLeft <= 0) {
-            clearInterval(timerInterval);
+            loserSound.play();
             gameEnd("slow");
-            gameOverSound.play();
-
-        // Update the timer on the website
-        } else {
-            timeStr = timeLeft.toString();
+        } else { // update time
             timerContainer.innerHTML = timeLeft + " seconds";
         }
     }, 1000);
+}
+
+//////////////////// GAME END SCREEN ///////////////////////
+
+/**
+ * FUNCTION: GAME END
+ * This function shows the endscreen of the game
+ */
+function gameEnd(gameFinish) {
+    // Clear interval, container info, pause music
+    clearInterval(timerInterval);
+    clearElement(gameContainer);
+    clearElement(gameInfo);
+    backgroundSound.pause();
+
+    // Create end board
+    createBoard("endBoard");
+    createBoardImage(gameFinish, "endBoard");
+    createNewButton("Play Again!", "endBoard", "reloadPage");
+}
+
+/**
+ * FUNCTION: CREATE BOARD IMAGE
+ * Checks if gameOver, timeUp, winner, start and creates image,
+ * image is added to endscreen
+ */
+function createBoardImage(imageMessage, boardName, imageAction) {
+    let boardImage = document.createElement("img");
+    boardImage.src = "site-images/"+ imageMessage +".gif";
+    let selectedBoard = document.getElementById(boardName);
+    selectedBoard.appendChild(boardImage);
+    boardImage.addEventListener("mouseover", () =>{hoverSound.play();});
+    
+    if (imageAction == "setGame") {
+        boardImage.addEventListener("click", () =>{setGame()});
+    }
+    else {
+        boardImage.addEventListener("click", () =>{window.location.reload();});
+    }
+}
+
+/**
+ * FUNCTION: CREATE START BUTTON
+ * Adds it to end screen
+ */
+function createNewButton(buttonText, boardName, buttonAction) {
+    let newButton = document.createElement("button");
+    newButton.innerText = buttonText;
+    let selectedBoard = document.getElementById(boardName);
+    selectedBoard.appendChild(newButton);
+    newButton.addEventListener("mouseover", () =>{hoverSound.play();});
+
+    if (buttonAction == "setGame") {
+        newButton.addEventListener("click", () =>{setGame()});
+    }
+    else {
+        newButton.addEventListener("click", () =>{window.location.reload();});
+    }
 }
