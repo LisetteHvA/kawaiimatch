@@ -15,8 +15,6 @@ const   // Game board items
         board2 = document.getElementById("board2"),
         gameInfo = document.getElementById("gameInfo"),
         gameContainer = document.getElementById("gameContainer"),
-        restartButton = document.getElementById("restartButton"),
-        scorebord = document.getElementById("score"),
         starsContainer = document.getElementById("stars"),
         timerContainer = document.getElementById("timerContainer"),
 
