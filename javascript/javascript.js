@@ -59,6 +59,7 @@ window.onload = function() {
  * Creates the game boards
  */
 function startGame() {
+    //clearElement(gameInfo);
     createBoard("startBoard");
     createBoardImage("start", "startBoard", "setGame");
     createNewButton("Play Game", "startBoard", "setGame");
