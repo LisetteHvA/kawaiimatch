@@ -5,40 +5,44 @@
  *              When a user clicks a wrong item, after 5 times, its game over.
  */
 
-/**
- * CONSTANTS & VARIABLES
- */
-
 // CONSTANTS
+
+/*
+const gameElements = {
+    gameInfo: document.getElementById("gameInfo"),
+    gameContainer: document.getElementById("gameContainer"),
+    starsContainer: document.getElementById("stars"),
+    timerContainer: document.getElementById("timerContainer"),
+    levelContainer: document.getElementById("levelContainer"),
+};
+*/
+
+const audioFiles = {
+    background: new Audio("sounds/background.mp3"),
+    hover: new Audio("sounds/hover.mp3"),
+    correct: new Audio("sounds/correct.mp3"),
+    incorrect: new Audio("sounds/incorrect.mp3"),
+    winner: new Audio("sounds/winner.mp3"),
+    loser: new Audio("sounds/loser.mp3"),
+    slow: new Audio("sounds/slow.mp3"),
+};
+
 const   // Game board html elements
-        gameInfo = document.getElementById("gameInfo"),
-        gameContainer = document.getElementById("gameContainer"),
-        starsContainer = document.getElementById("stars"),
-        timerContainer = document.getElementById("timerContainer"),
-        levelContainer = document.getElementById("levelContainer"),
+    gameInfo = document.getElementById("gameInfo"),
+    gameContainer = document.getElementById("gameContainer"),
+    starsContainer = document.getElementById("stars"),
+    timerContainer = document.getElementById("timerContainer"),
+    levelContainer = document.getElementById("levelContainer"),
 
-        // Number of images within images folder to show as item
-        numberOfGameImages = 33,
-
-        // Audio
-        backgroundSound = new Audio("sounds/background.mp3"),
-        hoverSound = new Audio("sounds/hover.mp3"),
-        correctSound = new Audio("sounds/correct.mp3"),
-        incorrectSound = new Audio("sounds/incorrect.mp3"),
-        winnerSound = new Audio("sounds/winner.mp3"),
-        loserSound = new Audio("sounds/loser.mp3"),
-        slowSound = new Audio("sounds/slow.mp3");
+    // Number of images within images folder to show as item
+    numberOfGameImages = 33;
 
 // VARIABLES
 let stars = 0;
 let level = 0;
-
-// Items
 let matchingItem;
 let itemsListA = [];
 let itemsListB = [];
-
-// Timer
 let timeLeft = 0;
 let timePerLevel;
 let timerInterval;
@@ -73,7 +77,7 @@ function setGame() {
     clearElement(gameContainer);
 
     //Play background music
-    backgroundSound.play();
+    audioFiles.background.play();
 
     // Choose items
     matchingItem = pickMatchingItem();
@@ -91,8 +95,6 @@ function setGame() {
     // Set game info
     setTimerTo(15);
     startTimer(timePerLevel);
-
-    // Stars
     showStars(); 
 }
 
@@ -100,25 +102,16 @@ function setGame() {
  * FUNCTION: CLEAR ELEMENT
  * Clears the content of an html element
  */
-function clearElement(elementName){
-    elementName.innerHTML = "";
-}
-
-/**
- * FUNCTION: SET TIMER
- * Clears the content of an html element
- */
-function setTimerTo(amountOfSeconds){
-    timePerLevel = amountOfSeconds;
+function clearElement(element) {
+    element.innerHTML = "";
 }
 
 /**
  * FUNCTION: LEVEL UP
  * Clears the content of an html element
  */
-function levelUp(){
+function levelUp() {
     level++;
-    console.log("Level:" + level);
     levelContainer.innerHTML = "Level: "+ level;
 }
 
@@ -174,10 +167,10 @@ function createItemImages(list, boardId) {
     let board = document.getElementById(boardId);
     list.forEach((itemNumber) => {
         let itemImg = document.createElement("img");
-        itemImg.src = "item-images/"+itemNumber+".png";
+        itemImg.src = "item-images/" + itemNumber + ".png";
         itemImg.alt = itemNumber;
         itemImg.addEventListener("click", selectItem);
-        itemImg.addEventListener("mouseover", () =>{hoverSound.play();});
+        itemImg.addEventListener("mouseover", () =>{audioFiles.hover.play();});
         board.appendChild(itemImg);
     });
 }
@@ -217,16 +210,17 @@ function selectItem() {
 
     // When correct item is clicked
     if (this.alt == matchingItem) {
-        correctSound.play();
+        audioFiles.correct.play();
         stars++;
         setGame();
     } 
     // When wrong item is clicked
     else {
-        incorrectSound.play();
+        audioFiles.incorrect.play();
         stars--;
         showStars();
     }
+    // Check if there is a winner/loser
     getGameStatus();
 }
 
@@ -239,16 +233,22 @@ function selectItem() {
 function getGameStatus() {
     if (stars == 0) { // loser
         gameEnd("loser");
-        loserSound.play();
     }
     if (stars == 5) { // winner
         gameEnd("winner");
-        winnerSound.play();
         levelUp();
     }
 }
 
 //////////////////// TIMER ///////////////////////
+
+/**
+ * FUNCTION: SET TIMER
+ * Change the time you have to play th level 
+ */
+function setTimerTo(amountOfSeconds){
+    timePerLevel = amountOfSeconds;
+}
 
 /**
  * FUNCTION: START TIMER
@@ -263,7 +263,6 @@ function startTimer(duration) {
         let timeLeft = Math.round((endTime - Date.now()) / 1000);
         // When there is no time left - end game
         if (timeLeft <= 0) {
-            loserSound.play();
             gameEnd("slow");
         } else { // update time
             timerContainer.innerHTML = timeLeft + " seconds";
@@ -282,7 +281,15 @@ function gameEnd(gameFinish) {
     clearInterval(timerInterval);
     clearElement(gameContainer);
     clearElement(gameInfo);
-    backgroundSound.pause();
+    audioFiles.background.pause();
+
+    if (gameFinish == "winner") {
+        audioFiles.winner.play();
+    } else if (gameFinish == "loser") {
+        audioFiles.loser.play();
+    } else if (gameFinish == "slow") {
+        audioFiles.slow.play();
+    }
 
     // Create end board
     createBoard("endBoard");
@@ -300,7 +307,7 @@ function createBoardImage(imageMessage, boardName, imageAction) {
     boardImage.src = "site-images/"+ imageMessage +".gif";
     let selectedBoard = document.getElementById(boardName);
     selectedBoard.appendChild(boardImage);
-    boardImage.addEventListener("mouseover", () =>{hoverSound.play();});
+    boardImage.addEventListener("mouseover", () =>{audioFiles.hover.play();});
     
     if (imageAction == "setGame") {
         boardImage.addEventListener("click", () =>{setGame()});
@@ -320,7 +327,7 @@ function createNewButton(buttonText, boardName, buttonAction) {
     newButton.innerText = buttonText;
     let selectedBoard = document.getElementById(boardName);
     selectedBoard.appendChild(newButton);
-    newButton.addEventListener("mouseover", () =>{hoverSound.play();});
+    newButton.addEventListener("mouseover", () =>{audioFiles.hover.play();});
 
     if (buttonAction == "setGame") {
         newButton.addEventListener("click", () =>{setGame()});

@@ -263,13 +263,3 @@ button:hover {
         border-color: white;
     }
 } 
-
-/* targets only devices don't hover */
-@media (hover: none) { 
-    .board img:active {
-        border: 5px solid #505155;
-        transform: rotate(4deg);
-        background-color: #e8ecf9c2;
-        border-color: white;
-    }
-} 
