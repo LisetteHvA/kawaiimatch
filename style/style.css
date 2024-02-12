@@ -130,14 +130,6 @@ p {
     border-radius: 10px;
 }
 
-.board img:active {
-    border: 5px solid #505155;
-    transform: rotate(4deg);
-    background-color: #e8ecf9c2;
-    border-color: white;
-}
-
-
 /* END BOARD */
 
 #endBoard,
@@ -262,8 +254,19 @@ button:hover {
     }
 }
 
+/* targets only devices that can hover */
 @media (hover: hover) { 
     .board img:hover {
+        border: 5px solid #505155;
+        transform: rotate(4deg);
+        background-color: #e8ecf9c2;
+        border-color: white;
+    }
+} 
+
+/* targets only devices don't hover */
+@media (hover: none) { 
+    .board img:active {
         border: 5px solid #505155;
         transform: rotate(4deg);
         background-color: #e8ecf9c2;
