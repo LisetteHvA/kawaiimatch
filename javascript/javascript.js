@@ -10,13 +10,12 @@
  */
 
 // CONSTANTS
-const   // Game board items
-        board1 = document.getElementById("board1"),
-        board2 = document.getElementById("board2"),
+const   // Game board html elements
         gameInfo = document.getElementById("gameInfo"),
         gameContainer = document.getElementById("gameContainer"),
         starsContainer = document.getElementById("stars"),
         timerContainer = document.getElementById("timerContainer"),
+        levelContainer = document.getElementById("levelContainer"),
 
         // Number of images within images folder to show as item
         numberOfGameImages = 33,
@@ -32,6 +31,7 @@ const   // Game board items
 
 // VARIABLES
 let stars = 0;
+let level = 0;
 
 // Items
 let matchingItem;
@@ -40,7 +40,7 @@ let itemsListB = [];
 
 // Timer
 let timeLeft = 0;
-let timePerLevel = 15; //in seconds
+let timePerLevel;
 let timerInterval;
 
 //////////////////// START GAME ///////////////////////
@@ -90,16 +90,37 @@ function setGame() {
     createItemImages(itemsListB, "board2");
 
     // Set game info
+    setTimerTo(15);
     startTimer(timePerLevel);
+
+    // Stars
     showStars(); 
 }
 
 /**
- * FUNCTION: SET GAME
- * Creates the game boards
+ * FUNCTION: CLEAR ELEMENT
+ * Clears the content of an html element
  */
 function clearElement(elementName){
     elementName.innerHTML = "";
+}
+
+/**
+ * FUNCTION: SET TIMER
+ * Clears the content of an html element
+ */
+function setTimerTo(amountOfSeconds){
+    timePerLevel = amountOfSeconds;
+}
+
+/**
+ * FUNCTION: LEVEL UP
+ * Clears the content of an html element
+ */
+function levelUp(){
+    level++;
+    console.log("Level:" + level);
+    levelContainer.innerHTML = "Level: "+ level;
 }
 
 /**
@@ -224,6 +245,7 @@ function getGameStatus() {
     if (stars == 5) { // winner
         gameEnd("winner");
         winnerSound.play();
+        levelUp();
     }
 }
 
@@ -283,15 +305,16 @@ function createBoardImage(imageMessage, boardName, imageAction) {
     
     if (imageAction == "setGame") {
         boardImage.addEventListener("click", () =>{setGame()});
-    }
-    else {
+    } else if (imageAction == "reloadPage") {
         boardImage.addEventListener("click", () =>{window.location.reload();});
+    } else {
+        
     }
 }
 
 /**
- * FUNCTION: CREATE START BUTTON
- * Adds it to end screen
+ * FUNCTION: CREATE BUTTON
+ * Adds it to info screen
  */
 function createNewButton(buttonText, boardName, buttonAction) {
     let newButton = document.createElement("button");
@@ -306,4 +329,22 @@ function createNewButton(buttonText, boardName, buttonAction) {
     else {
         newButton.addEventListener("click", () =>{window.location.reload();});
     }
+}
+
+//////////////////// LEVEL UP SCREEN ///////////////////////
+
+/**
+ * FUNCTION: GAME END
+ * This function shows the endscreen of the game
+ */
+function createNextLevelBoard() {
+    // Clear interval, container info, pause music
+    clearInterval(timerInterval);
+    clearElement(gameContainer);
+    clearElement(gameInfo);
+
+    // Create nextLevel board
+    createBoard("nextLevelBoard");
+    createBoardImage(level, "nextLevelBoard");
+    createNewButton("Next level!", "nextLevelBoard", "reloadPage");
 }
