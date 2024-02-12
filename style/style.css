@@ -130,6 +130,12 @@ p {
     border-radius: 10px;
 }
 
+.board img:active {
+    border: 5px solid #505155;
+    transform: rotate(4deg);
+    background-color: #e8ecf9c2;
+    border-color: white;
+}
 
 
 /* END BOARD */
