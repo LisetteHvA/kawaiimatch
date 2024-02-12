@@ -57,7 +57,6 @@ window.onload = function() {
  * Creates the game boards
  */
 function startGame() {
-    //clearElement(gameInfo);
     createBoard("startBoard");
     createBoardImage("start", "startBoard", "setGame");
     createNewButton("Play Game", "startBoard", "setGame");
@@ -175,7 +174,7 @@ function createItemImages(list, boardId) {
     let board = document.getElementById(boardId);
     list.forEach((itemNumber) => {
         let itemImg = document.createElement("img");
-        itemImg.src = "images/"+itemNumber+".png";
+        itemImg.src = "item-images/"+itemNumber+".png";
         itemImg.alt = itemNumber;
         itemImg.addEventListener("click", selectItem);
         itemImg.addEventListener("mouseover", () =>{hoverSound.play();});
@@ -190,7 +189,7 @@ function createItemImages(list, boardId) {
  * This function creates images for the amount of stars
  */
 function showStars() {
-    starsContainer.innerHTML = "";
+    clearElement(starsContainer);
     for (let i = 0; i < stars; i++) {
         let starImg = document.createElement("img");
         starImg.src = "site-images/star.png";
