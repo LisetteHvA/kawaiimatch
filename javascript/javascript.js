@@ -2,14 +2,15 @@
  * NAME:        KAWAII MATCH
  * AUTHOR:      Lisette Pool
  * DESCRIPTION: Search the matching item and click it to gain points.
- *              When a user clicks a wrong item, after 5 times, its game over.
+ *              If you have 5 stars, you can go to the next round.
+ *              When a user clicks a wrong item, its game over, 
+ *              unles you have a star, then you lose it.
  */
 
 // CONSTANTS
 
 /*
 const gameElements = {
-    gameInfo: document.getElementById("gameInfo"),
     gameContainer: document.getElementById("gameContainer"),
     starsContainer: document.getElementById("stars"),
     timerContainer: document.getElementById("timerContainer"),
@@ -28,9 +29,8 @@ const audioFiles = {
 };
 
 const   // Game board html elements
-    gameInfo = document.getElementById("gameInfo"),
     gameContainer = document.getElementById("gameContainer"),
-    starsContainer = document.getElementById("stars"),
+    starsContainer = document.getElementById("starsContainer"),
     timerContainer = document.getElementById("timerContainer"),
     levelContainer = document.getElementById("levelContainer"),
 
@@ -39,19 +39,16 @@ const   // Game board html elements
 
 // VARIABLES
 let stars = 0;
-let level = 0;
+let level = 1;
 let matchingItem;
 let itemsListA = [];
 let itemsListB = [];
 let timeLeft = 0;
 let timePerLevel;
+let numberOfItemsPerLevel;
 let timerInterval;
 
 //////////////////// START GAME ///////////////////////
-/**
- * START GAME
- * Games starts when page is loaded.
- */
 window.onload = function() {
     startGame();
 }
@@ -73,29 +70,24 @@ function startGame() {
  * Creates the game boards
  */
 function setGame() {
-    // Empty game container
     clearElement(gameContainer);
+    setupLevel(level);
 
     //Play background music
     audioFiles.background.play();
 
-    // Choose items
+    // Choose items, create boards and add images to the boards
     matchingItem = pickMatchingItem();
     itemsListA = createItemsList();
     itemsListB = createItemsList();
-
-    // Create boards
     createBoard("board1");
     createBoard("board2");
-
-    // Create images for each item and add to board
     createItemImages(itemsListA, "board1");
     createItemImages(itemsListB, "board2");
 
     // Set game info
-    setTimerTo(15);
+    showStars();
     startTimer(timePerLevel);
-    showStars(); 
 }
 
 /**
@@ -104,15 +96,6 @@ function setGame() {
  */
 function clearElement(element) {
     element.innerHTML = "";
-}
-
-/**
- * FUNCTION: LEVEL UP
- * Clears the content of an html element
- */
-function levelUp() {
-    level++;
-    levelContainer.innerHTML = "Level: "+ level;
 }
 
 /**
@@ -142,7 +125,7 @@ function pickMatchingItem() {
  */
 function createItemsList() {
     let numbers = [];
-    while (numbers.length < 8) {
+    while (numbers.length < numberOfItemsPerLevel - 1) {
         let randomNumber = Math.floor(Math.random() * numberOfGameImages);
         if (!numbers.includes(randomNumber) 
             && randomNumber != matchingItem
@@ -204,14 +187,11 @@ function showStars() {
  * It updates the scorebord and lives.
  */
 function selectItem() {
-    // Reset timer
-    clearInterval(timerInterval);
-    clearElement(timerContainer);
-
     // When correct item is clicked
     if (this.alt == matchingItem) {
         audioFiles.correct.play();
         stars++;
+        stopTimer();
         setGame();
     } 
     // When wrong item is clicked
@@ -243,31 +223,31 @@ function getGameStatus() {
 //////////////////// TIMER ///////////////////////
 
 /**
- * FUNCTION: SET TIMER
- * Change the time you have to play th level 
- */
-function setTimerTo(amountOfSeconds){
-    timePerLevel = amountOfSeconds;
-}
-
-/**
  * FUNCTION: START TIMER
  * Sets timer for 'duration' minutes.
  * If the time is up, the game is over.
  */
 function startTimer(duration) {
-    clearElement(timerContainer);
     let startTime = Date.now();
     let endTime = startTime + (duration * 1000);
     timerInterval = setInterval(() => {
         let timeLeft = Math.round((endTime - Date.now()) / 1000);
-        // When there is no time left - end game
         if (timeLeft <= 0) {
+            stopTimer();
             gameEnd("slow");
-        } else { // update time
-            timerContainer.innerHTML = timeLeft + " seconds";
+        } else {
+            timerContainer.innerHTML = timeLeft;
         }
     }, 1000);
+}
+
+/**
+ * FUNCTION: STOP TIMER
+ * Stops the timer interval
+ */
+function stopTimer() {
+    clearInterval(timerInterval);
+    clearElement(timerContainer);
 }
 
 //////////////////// GAME END SCREEN ///////////////////////
@@ -280,21 +260,26 @@ function gameEnd(gameFinish) {
     // Clear interval, container info, pause music
     clearInterval(timerInterval);
     clearElement(gameContainer);
-    clearElement(gameInfo);
     audioFiles.background.pause();
-
-    if (gameFinish == "winner") {
-        audioFiles.winner.play();
-    } else if (gameFinish == "loser") {
-        audioFiles.loser.play();
-    } else if (gameFinish == "slow") {
-        audioFiles.slow.play();
-    }
 
     // Create end board
     createBoard("endBoard");
     createBoardImage(gameFinish, "endBoard");
-    createNewButton("Play Again!", "endBoard", "reloadPage");
+    
+    // update sterren
+    stars = 0;
+    showStars();
+
+    if (gameFinish == "winner") {
+        audioFiles.winner.play();
+        createNewButton("Next Level!", "endBoard", "setGame");
+    } else if (gameFinish == "loser") {
+        audioFiles.loser.play();
+        createNewButton("Play Again!", "endBoard", "reloadPage");
+    } else if (gameFinish == "slow") {
+        audioFiles.slow.play();
+        createNewButton("Play Again!", "endBoard", "reloadPage");
+    }
 }
 
 /**
@@ -337,7 +322,7 @@ function createNewButton(buttonText, boardName, buttonAction) {
     }
 }
 
-//////////////////// LEVEL UP SCREEN ///////////////////////
+//////////////////// LEVELS ///////////////////////
 
 /**
  * FUNCTION: GAME END
@@ -347,10 +332,51 @@ function createNextLevelBoard() {
     // Clear interval, container info, pause music
     clearInterval(timerInterval);
     clearElement(gameContainer);
-    clearElement(gameInfo);
 
     // Create nextLevel board
     createBoard("nextLevelBoard");
     createBoardImage(level, "nextLevelBoard");
     createNewButton("Next level!", "nextLevelBoard", "reloadPage");
 }
+
+/**
+ * FUNCTION: LEVEL UP
+ * Clears the content of an html element
+ */
+function levelUp() {
+    level++;
+}
+
+/**
+ * FUNCTION: SETS UP A NEW LEVEL
+ * This function shows the endscreen of the game
+ */
+function setupLevel(level) {
+    switch (level) {
+        case 1:
+            timePerLevel = 30;
+            numberOfItemsPerLevel = 9;
+            break;
+        case 2:
+            timePerLevel = 20;
+            numberOfItemsPerLevel = 6;
+            break;
+        case 3:
+            timePerLevel = 15;
+            numberOfItemsPerLevel = 9;
+            break;
+        case 4:
+            timePerLevel = 15;
+            numberOfItemsPerLevel = 12;
+            break;
+        case 5:
+            timePerLevel = 7;
+            numberOfItemsPerLevel = 6;
+            break;
+        default:
+            console.error("Invalid level!");
+            return;
+    }
+    levelContainer.innerHTML = level;
+}
+

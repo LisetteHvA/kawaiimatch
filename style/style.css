@@ -8,6 +8,17 @@
     text-align: center;
 }
 
+/* Prevents images from being selected or copied 
+on touch devices and desktop browsers. */
+img { 
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+}
+
 body {
     min-height: 100vh;
     background: rgb(255, 211, 218);
@@ -18,19 +29,7 @@ body {
     justify-content: space-between;
 }
 
-img {
-    -webkit-touch-callout: none;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -ms-user-select: none;
-    user-select: none;
-}
-
 /* HEADER */
-header a img {
-    width: 200px;
-}
 
 header {
     background: #d67983a6;
@@ -42,22 +41,25 @@ header {
     align-items: center;
 }
 
-header a,
-header section {
-    width: 33%;
+header h1 img {
+    width: 200px;
 }
 
-header img:hover {
+header div {
+    display: flex;
+    justify-content: space-between;
+}
+
+header section {
+    margin: 0 10px;
+}
+
+header img:hover,
+header p:hover {
     transform: rotate(-3deg);
 }
 
-header h1:hover {
-    transform: scaleY(1.5);
-}
-
-/* STARS */
-
-#stars img {
+#starsContainer img {
     width: 45px;
     height: 45px;
     margin: 3px;
@@ -74,25 +76,19 @@ footer {
 
 /* FONTS */
 
-h1 {
+h2 {
     font-size: 1.1em;
     font-weight: 400;
     color: white;
 }
 
-h2 {
+p {
     font-size: 1.8em;
     font-weight: 600;
     text-transform: uppercase;
     color: #fef280;
     text-shadow: 2px 2px black;
     margin-bottom: .1em;
-}
-
-p {
-    color: #fdf6f8;
-    font-style: italic;
-    font-size: .8em;
 }
 
 /* GAME CONTAINER */
@@ -174,21 +170,15 @@ button:hover {
 
 /* RESPONSIVE */
 
-/* Medium screens */
-@media all and (max-width: 800px) {
-    header {
-        justify-content: space-between;
+/* targets only devices that can hover */
+@media (hover: hover) { 
+    .board img:hover {
+        border: 5px solid #505155;
+        transform: rotate(4deg);
+        background-color: #e8ecf9c2;
+        border-color: white;
     }
-
-    header section:first-of-type {
-        display: none;
-    }
-
-    header a,
-    header section {
-        width: 50%;
-    }
-}
+} 
 
 /* Small screens */
 @media all and (max-width: 500px) {
@@ -196,27 +186,25 @@ button:hover {
         background-size: auto;
     }
 
-    footer {
-        margin-top: auto;
+    header {
+        padding: 5px 10px;
+    }
+
+    header h1 img {
+        width: 125px;
+    }
+
+    #starsContainer img {
+        width: 35px;
+        height: 35px;
+    }
+
+    #starsContainer {
+        margin-right: 10px;
     }
 
     main {
         margin-bottom: 10px;
-    }
-
-    header a {
-        width: 140px;
-    }
-
-    header {
-        padding: 5px;
-    }
-    header a img {
-        width: 125px;
-    }
-
-    header section:first-of-type {
-        display: none;
     }
 
     #gameContainer {
@@ -235,31 +223,11 @@ button:hover {
         margin: 6px;
     }
 
-    header section:last-of-type {
-        width: auto;
-        border: none;
-    }
-
-    #stars img {
-        width: 35px;
-        height: 35px;
-    }
-
-    #stars {
-        margin-right: 10px;
-    }
-
     .board:nth-of-type(2) {
         margin-top: 0;
     }
-}
 
-/* targets only devices that can hover */
-@media (hover: hover) { 
-    .board img:hover {
-        border: 5px solid #505155;
-        transform: rotate(4deg);
-        background-color: #e8ecf9c2;
-        border-color: white;
+    footer {
+        margin-top: auto;
     }
-} 
+}
