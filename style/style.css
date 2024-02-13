@@ -8,6 +8,33 @@
     text-align: center;
 }
 
+body {
+    min-height: 100vh;
+    background: rgb(255, 211, 218);
+    background-image: url("../images/background-images/background.png");
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* FONTS */
+
+h2 {
+    font-size: 1.1em;
+    font-weight: 400;
+    color: white;
+}
+
+p {
+    font-size: 1.8em;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #fef280;
+    text-shadow: 2px 2px black;
+    margin-bottom: .1em;
+}
+
 /* Prevents images from being selected or copied 
 on touch devices and desktop browsers. */
 img { 
@@ -17,16 +44,6 @@ img {
     -moz-user-select: none;
     -ms-user-select: none;
     user-select: none;
-}
-
-body {
-    min-height: 100vh;
-    background: rgb(255, 211, 218);
-    background-image: url("../site-images/background.png");
-    background-size: cover;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
 }
 
 /* HEADER */
@@ -39,6 +56,15 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+header h1 {
+    display: flex;
+    align-items: center;
+}
+
+header section {
+    text-align: center;
 }
 
 header h1 img {
@@ -72,23 +98,6 @@ footer {
     color: white;
     width: 100%;
     padding: 0.5em;
-}
-
-/* FONTS */
-
-h2 {
-    font-size: 1.1em;
-    font-weight: 400;
-    color: white;
-}
-
-p {
-    font-size: 1.8em;
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #fef280;
-    text-shadow: 2px 2px black;
-    margin-bottom: .1em;
 }
 
 /* GAME CONTAINER */
@@ -126,7 +135,7 @@ p {
     border-radius: 10px;
 }
 
-/* END BOARD */
+/* START BOARD & END BOARD */
 
 #endBoard,
 #startBoard {
@@ -200,7 +209,7 @@ button:hover {
     }
 
     #starsContainer {
-        margin-right: 10px;
+        display: none;
     }
 
     main {
@@ -225,6 +234,7 @@ button:hover {
 
     .board:nth-of-type(2) {
         margin-top: 0;
+        margin-bottom: 0;
     }
 
     footer {

@@ -9,15 +9,6 @@
 
 // CONSTANTS
 
-/*
-const gameElements = {
-    gameContainer: document.getElementById("gameContainer"),
-    starsContainer: document.getElementById("stars"),
-    timerContainer: document.getElementById("timerContainer"),
-    levelContainer: document.getElementById("levelContainer"),
-};
-*/
-
 const audioFiles = {
     background: new Audio("sounds/background.mp3"),
     hover: new Audio("sounds/hover.mp3"),
@@ -29,13 +20,15 @@ const audioFiles = {
 };
 
 const   // Game board html elements
-    gameContainer = document.getElementById("gameContainer"),
+    metricsContainer = document.getElementById("metricsContainer"),
     starsContainer = document.getElementById("starsContainer"),
-    timerContainer = document.getElementById("timerContainer"),
+    starsCountContainer  = document.getElementById("starsCountContainer"),
     levelContainer = document.getElementById("levelContainer"),
+    timerContainer = document.getElementById("timerContainer"),
+    gameContainer = document.getElementById("gameContainer"),
 
     // Number of images within images folder to show as item
-    numberOfGameImages = 33;
+    numberOfGameImages = 41;
 
 // VARIABLES
 let stars = 0;
@@ -58,6 +51,7 @@ window.onload = function() {
  * Creates the game boards
  */
 function startGame() {
+    showElementById("metricsContainer", "hidden");
     createBoard("startBoard");
     createBoardImage("start", "startBoard", "setGame");
     createNewButton("Play Game", "startBoard", "setGame");
@@ -85,17 +79,18 @@ function setGame() {
     createItemImages(itemsListA, "board1");
     createItemImages(itemsListB, "board2");
 
-    // Set game info
+    // Set game Metrics
     showStars();
     startTimer(timePerLevel);
+    showElementById("metricsContainer", "show");
 }
 
 /**
- * FUNCTION: CLEAR ELEMENT
- * Clears the content of an html element
+ * FUNCTION: changeBackgroundImage
+ * arguments: imageName the name of an image in the folder background-images 
  */
-function clearElement(element) {
-    element.innerHTML = "";
+function changeBackgroundImage(imageName) {
+    document.body.style.backgroundImage = `url('images/background-images/${imageName}')`;
 }
 
 /**
@@ -150,7 +145,7 @@ function createItemImages(list, boardId) {
     let board = document.getElementById(boardId);
     list.forEach((itemNumber) => {
         let itemImg = document.createElement("img");
-        itemImg.src = "item-images/" + itemNumber + ".png";
+        itemImg.src = "images/item-images/" + itemNumber + ".png";
         itemImg.alt = itemNumber;
         itemImg.addEventListener("click", selectItem);
         itemImg.addEventListener("mouseover", () =>{audioFiles.hover.play();});
@@ -168,15 +163,16 @@ function showStars() {
     clearElement(starsContainer);
     for (let i = 0; i < stars; i++) {
         let starImg = document.createElement("img");
-        starImg.src = "site-images/star.png";
+        starImg.src = "images/site-images/star.png";
         starsContainer.appendChild(starImg);
     }
     if (stars < 1) {
         let starImg = document.createElement("img");
-        starImg.src = "site-images/stars.png";
+        starImg.src = "images/site-images/stars.png";
         starsContainer.appendChild(starImg);
         stars = 0;
     }
+    starsCountContainer.innerHTML = stars;
 }
 
 //////////////////// PLAYING THE GAME ///////////////////////
@@ -208,15 +204,13 @@ function selectItem() {
 
 /**
  * FUNCTION: CHECK GAME STATUS
- * Checks if winner/loser
+ * Checks if winner/loser/slow
  */
 function getGameStatus() {
     if (stars == 0) { // loser
         gameEnd("loser");
-    }
-    if (stars == 5) { // winner
+    } else if (stars == 5) { // winner
         gameEnd("winner");
-        levelUp();
     }
 }
 
@@ -224,19 +218,20 @@ function getGameStatus() {
 
 /**
  * FUNCTION: START TIMER
- * Sets timer for 'duration' minutes.
- * If the time is up, the game is over.
+ * Starts a timer for the specified duration in seconds.
+ * If the time is up,it goes to gameEnd slow.
  */
 function startTimer(duration) {
     let startTime = Date.now();
     let endTime = startTime + (duration * 1000);
+
     timerInterval = setInterval(() => {
         let timeLeft = Math.round((endTime - Date.now()) / 1000);
-        if (timeLeft <= 0) {
+        if (timeLeft > 0) {
+            timerContainer.innerHTML = timeLeft;
+        } else {
             stopTimer();
             gameEnd("slow");
-        } else {
-            timerContainer.innerHTML = timeLeft;
         }
     }, 1000);
 }
@@ -247,7 +242,6 @@ function startTimer(duration) {
  */
 function stopTimer() {
     clearInterval(timerInterval);
-    clearElement(timerContainer);
 }
 
 //////////////////// GAME END SCREEN ///////////////////////
@@ -259,19 +253,18 @@ function stopTimer() {
 function gameEnd(gameFinish) {
     // Clear interval, container info, pause music
     clearInterval(timerInterval);
+    showElementById("metricsContainer", "hidden");
     clearElement(gameContainer);
     audioFiles.background.pause();
+    stars = 0;
 
     // Create end board
     createBoard("endBoard");
     createBoardImage(gameFinish, "endBoard");
-    
-    // update sterren
-    stars = 0;
-    showStars();
 
     if (gameFinish == "winner") {
         audioFiles.winner.play();
+        levelUp();
         createNewButton("Next Level!", "endBoard", "setGame");
     } else if (gameFinish == "loser") {
         audioFiles.loser.play();
@@ -289,7 +282,7 @@ function gameEnd(gameFinish) {
  */
 function createBoardImage(imageMessage, boardName, imageAction) {
     let boardImage = document.createElement("img");
-    boardImage.src = "site-images/"+ imageMessage +".gif";
+    boardImage.src = "images/site-images/"+ imageMessage +".gif";
     let selectedBoard = document.getElementById(boardName);
     selectedBoard.appendChild(boardImage);
     boardImage.addEventListener("mouseover", () =>{audioFiles.hover.play();});
@@ -378,5 +371,26 @@ function setupLevel(level) {
             return;
     }
     levelContainer.innerHTML = level;
+}
+
+//////////////////// GENERAL ///////////////////////
+
+/**
+ * FUNCTION: Show Element By ID
+ * Takes 2 arguments: 
+ *      elementID -> id of the element you want to show or hide
+ *      visibility -> show / hide
+ */
+function showElementById(elementID, visibility) {
+    let element = document.getElementById(elementID);
+    element.style.visibility = (visibility === "show") ? "visible" : "hidden";
+}
+
+/**
+ * FUNCTION: CLEAR ELEMENT
+ * Clears the content of an html element
+ */
+function clearElement(element) {
+    element.innerHTML = "";
 }
 
