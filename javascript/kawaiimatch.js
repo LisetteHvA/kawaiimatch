@@ -31,15 +31,15 @@ const   // Game board html elements
     numberOfGameImages = 41;
 
 // VARIABLES
-let stars = 0;
-let level = 1;
 let matchingItem;
 let itemsListA = [];
 let itemsListB = [];
 let timeLeft = 0;
+let timerInterval;
+let stars = 0;
+let level = 1;
 let timePerLevel;
 let numberOfItemsPerLevel;
-let timerInterval;
 
 //////////////////// START GAME ///////////////////////
 window.onload = function() {
