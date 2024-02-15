@@ -91,6 +91,10 @@ header p:hover {
     margin: 3px;
 }
 
+#starsCountContainer {
+    display: none;
+}
+
 /* FOOTER */
 
 footer {
@@ -210,6 +214,10 @@ button:hover {
 
     #starsContainer {
         display: none;
+    }
+
+    #starsCountContainer {
+        display: block;
     }
 
     main {

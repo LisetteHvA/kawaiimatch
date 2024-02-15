@@ -19,10 +19,10 @@ const audioFiles = {
     slow: new Audio("sounds/slow.mp3"),
 };
 
-const   // Game board html elements
+const // Game board html elements
     metricsContainer = document.getElementById("metricsContainer"),
     starsContainer = document.getElementById("starsContainer"),
-    starsCountContainer  = document.getElementById("starsCountContainer"),
+    starsCountContainer = document.getElementById("starsCountContainer"),
     levelContainer = document.getElementById("levelContainer"),
     timerContainer = document.getElementById("timerContainer"),
     gameContainer = document.getElementById("gameContainer"),
@@ -40,6 +40,7 @@ let stars = 0;
 let level = 1;
 let timePerLevel;
 let numberOfItemsPerLevel;
+let backgroundImage;
 
 //////////////////// START GAME ///////////////////////
 window.onload = function() {
@@ -131,7 +132,6 @@ function createItemsList() {
     // Add number of the matchingItem on random position in the list
     let randomIndex = Math.floor(Math.random() * 9);
     numbers.splice(randomIndex, 0, matchingItem);
-
     return numbers;
 }
 
@@ -141,9 +141,9 @@ function createItemsList() {
  * This function creates an image for each item in the board
  * and add this image to the board
  */
-function createItemImages(list, boardId) {
+function createItemImages(itemNumbers, boardId) {
     let board = document.getElementById(boardId);
-    list.forEach((itemNumber) => {
+    itemNumbers.forEach((itemNumber) => {
         let itemImg = document.createElement("img");
         itemImg.src = "images/item-images/" + itemNumber + ".png";
         itemImg.alt = itemNumber;
@@ -161,11 +161,13 @@ function createItemImages(list, boardId) {
  */
 function showStars() {
     clearElement(starsContainer);
+
     for (let i = 0; i < stars; i++) {
         let starImg = document.createElement("img");
         starImg.src = "images/site-images/star.png";
         starsContainer.appendChild(starImg);
     }
+
     if (stars < 1) {
         let starImg = document.createElement("img");
         starImg.src = "images/site-images/stars.png";
@@ -204,13 +206,13 @@ function selectItem() {
 
 /**
  * FUNCTION: CHECK GAME STATUS
- * Checks if winner/loser/slow
+ * Checks if winner/loser
  */
 function getGameStatus() {
-    if (stars == 0) { // loser
-        gameEnd("loser");
-    } else if (stars == 5) { // winner
-        gameEnd("winner");
+    if (stars === 0) { 
+        gameEnd("loser"); // lost the level
+    } else if (stars === 5) { 
+        gameEnd("winner"); // won of level
     }
 }
 
@@ -349,22 +351,27 @@ function setupLevel(level) {
         case 1:
             timePerLevel = 30;
             numberOfItemsPerLevel = 9;
+            backgroundImage = "test";
             break;
         case 2:
             timePerLevel = 20;
             numberOfItemsPerLevel = 6;
+            backgroundImage = "background";
             break;
         case 3:
             timePerLevel = 15;
             numberOfItemsPerLevel = 9;
+            backgroundImage = "test";
             break;
         case 4:
             timePerLevel = 15;
             numberOfItemsPerLevel = 12;
+            backgroundImage = "background";
             break;
         case 5:
             timePerLevel = 7;
             numberOfItemsPerLevel = 6;
+            backgroundImage = "test";
             break;
         default:
             console.error("Invalid level!");
