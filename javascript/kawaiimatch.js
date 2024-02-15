@@ -39,6 +39,7 @@ const
     levelContainer = document.getElementById("levelContainer"),
     timerContainer = document.getElementById("timerContainer"),
     gameContainer = document.getElementById("gameContainer"),
+    lifesContainer = document.getElementById("lifesContainer"),
 
     // Number of images within images folder to show as item
     // P40 - https://www.freepik.com/author/freepik/icons/kawaii-lineal-color_47?t=f&sign-up=google&page=40#uuid=f3bfb0bd-e723-4676-b6ae-1c1daa026382
@@ -55,6 +56,7 @@ let level = 1;
 let timePerLevel;
 let numberOfItemsPerLevel;
 let backgroundImage;
+let lifes = 3;
 
 //////////////////// START GAME ///////////////////////
 window.onload = function() {
@@ -104,6 +106,7 @@ function createGameBoards() {
  */
 function showGameMetrics() {
     showStars();
+    showLifes();
     startTimer(timePerLevel);
     levelContainer.innerHTML = level;
 }
@@ -200,12 +203,21 @@ function showStars() {
     starsCountContainer.innerHTML = stars;
 }
 
+/**
+ * FUNCTION: show Lifes
+ * This function creates images for the amount of stars
+ */
+function showLifes() {
+    lifesContainer.innerHTML = lifes;
+}
+
+
 //////////////////// PLAYING THE GAME ///////////////////////
 
 /**
  * FUNCTION: SELECT ITEM
  * When an item is selected it checks if it is correct or wrong.
- * It updates the scorebord and lives.
+ * It updates the scorebord and lifes.
  */
 function selectItem() {
     if (this.alt == matchingItem) { // Correct item
@@ -228,8 +240,13 @@ function selectItem() {
  * Checks if winner/loser
  */
 function getGameStatus() {
-    if (stars === 0) { 
-        gameEnd("loser"); // lost the level
+    if (stars === 0) {
+        if (lifes > 1) {
+            lostLife();
+            gameEnd("lostlife");
+        } else {
+            gameEnd("loser"); // lost the level
+        }
     } else if (stars === 5) { 
         gameEnd("winner"); // won of level
     }
@@ -252,7 +269,16 @@ function startTimer(duration) {
             timerContainer.innerHTML = timeLeft;
         } else {
             stopTimer();
-            gameEnd("slow");
+            if (lifes === 2) {
+                lostLife();
+                gameEnd("lostlife1");
+            } else if (lifes === 1) {
+                lostLife();
+                gameEnd("lostlife2")
+            }
+            else {
+                gameEnd("slow");
+            }
         }
     }, 1000);
 }
@@ -272,7 +298,7 @@ function stopTimer() {
  * This function shows the endscreen of the game
  */
 function gameEnd(gameFinish) {
-    // Clear interval, container info, pause music
+    console.log("gameFinish is: " + gameFinish);
     clearInterval(timerInterval);
     showElement(metricsContainer, false);
     clearElement(gameContainer);
@@ -287,12 +313,18 @@ function gameEnd(gameFinish) {
         audioFiles.winner.play();
         levelUp();
         createNewButton("Next Level!", "endBoard", "setGame");
-    } else if (gameFinish == "loser") {
-        audioFiles.loser.play();
-        createNewButton("Play Again!", "endBoard", "reloadPage");
-    } else if (gameFinish == "slow") {
-        audioFiles.slow.play();
-        createNewButton("Play Again!", "endBoard", "reloadPage");
+    } else if (gameFinish == "lostlife2") {
+        createNewButton("Retry level!", "endBoard", "setGame");
+    } else if (gameFinish == "lostlife1") {
+        createNewButton("Retry level!", "endBoard", "setGame");
+    }else if (gameFinish == "loser" || gameFinish == "slow") {
+        console.log("hier niet komen");
+        if (gameFinish == "slow") {
+            audioFiles.slow.play();
+        } else if (gameFinish == "loser") {
+            audioFiles.loser.play();
+        }
+        createNewButton("Restart Game!", "endBoard", "reloadPage");
     }
 }
 
@@ -307,7 +339,6 @@ function createBoardImage(imageMessage, boardName, imageAction) {
     let selectedBoard = document.getElementById(boardName);
     selectedBoard.appendChild(boardImage);
     boardImage.addEventListener("mouseover", () =>{audioFiles.hover.play();});
-    
     if (imageAction == "setGame") {
         boardImage.addEventListener("click", () =>{setGame()});
     } else if (imageAction == "reloadPage") {
@@ -357,6 +388,14 @@ function createNextLevelBoard() {
  */
 function levelUp() {
     level++;
+}
+
+/**
+ * FUNCTION: LIFES DOWN
+ * Clears the content of an html element
+ */
+function lostLife() {
+    lifes--;
 }
 
 /**
