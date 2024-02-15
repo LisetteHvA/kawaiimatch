@@ -8,7 +8,19 @@
  */
 
 // CONSTANTS
+const levelData = [
+    {time: 30, numberOfItems: 6},
+    {time: 20, numberOfItems: 6},
+    {time: 15, numberOfItems: 6},
+    {time: 30, numberOfItems: 9},
+    {time: 20, numberOfItems: 9},
+    {time: 15, numberOfItems: 9},
+    {time: 30, numberOfItems: 12},
+    {time: 20, numberOfItems: 12},
+    {time: 13, numberOfItems: 12},
+];
 
+// AUDIO FILES
 const audioFiles = {
     background: new Audio("sounds/background.mp3"),
     hover: new Audio("sounds/hover.mp3"),
@@ -19,7 +31,8 @@ const audioFiles = {
     slow: new Audio("sounds/slow.mp3"),
 };
 
-const // Game board html elements
+// DOM ELEMENTS
+const
     metricsContainer = document.getElementById("metricsContainer"),
     starsContainer = document.getElementById("starsContainer"),
     starsCountContainer = document.getElementById("starsCountContainer"),
@@ -53,7 +66,7 @@ window.onload = function() {
  * Creates the game boards
  */
 function startGame() {
-    showElementById("metricsContainer", "hidden");
+    showElement(metricsContainer, false);
     createBoard("startBoard");
     createBoardImage("start", "startBoard", "setGame");
     createNewButton("Play Game", "startBoard", "setGame");
@@ -67,25 +80,34 @@ function startGame() {
  */
 function setGame() {
     clearElement(gameContainer);
-    setupLevel(level);
-
-    //Play background music
+    showElement(metricsContainer, true);
+    getLevelData(level);
     audioFiles.background.play();
-
-    // Choose items, create boards and add images to the boards
     matchingItem = pickMatchingItem();
     itemsListA = createItemsList();
     itemsListB = createItemsList();
+    createGameBoards();
+    showGameMetrics();
+}
+
+
+function createGameBoards() {
     createBoard("board1");
     createBoard("board2");
     createItemImages(itemsListA, "board1");
     createItemImages(itemsListB, "board2");
+}
 
-    // Set game Metrics
+/**
+ * FUNCTION: show Game Metrics
+ * Shows the current amount of stars, time and level
+ */
+function showGameMetrics() {
     showStars();
     startTimer(timePerLevel);
-    showElementById("metricsContainer", "show");
+    levelContainer.innerHTML = level;
 }
+
 
 /**
  * FUNCTION: changeBackgroundImage
@@ -186,20 +208,16 @@ function showStars() {
  * It updates the scorebord and lives.
  */
 function selectItem() {
-    // When correct item is clicked
-    if (this.alt == matchingItem) {
+    if (this.alt == matchingItem) { // Correct item
         audioFiles.correct.play();
         stars++;
         stopTimer();
         setGame();
-    } 
-    // When wrong item is clicked
-    else {
+    } else { // Wrong item
         audioFiles.incorrect.play();
         stars--;
         showStars();
     }
-    // Check if there is a winner/loser
     getGameStatus();
 }
 
@@ -256,7 +274,7 @@ function stopTimer() {
 function gameEnd(gameFinish) {
     // Clear interval, container info, pause music
     clearInterval(timerInterval);
-    showElementById("metricsContainer", "hidden");
+    showElement(metricsContainer, false);
     clearElement(gameContainer);
     audioFiles.background.pause();
     stars = 0;
@@ -294,8 +312,6 @@ function createBoardImage(imageMessage, boardName, imageAction) {
         boardImage.addEventListener("click", () =>{setGame()});
     } else if (imageAction == "reloadPage") {
         boardImage.addEventListener("click", () =>{window.location.reload();});
-    } else {
-        
     }
 }
 
@@ -344,41 +360,16 @@ function levelUp() {
 }
 
 /**
- * FUNCTION: SETS UP A NEW LEVEL
- * This function shows the endscreen of the game
+ * FUNCTION: SELECTS DATA FOR THE NEW LEVEL
  */
-function setupLevel(level) {
-    switch (level) {
-        case 1:
-            timePerLevel = 30;
-            numberOfItemsPerLevel = 9;
-            backgroundImage = "test";
-            break;
-        case 2:
-            timePerLevel = 20;
-            numberOfItemsPerLevel = 6;
-            backgroundImage = "background";
-            break;
-        case 3:
-            timePerLevel = 15;
-            numberOfItemsPerLevel = 9;
-            backgroundImage = "test";
-            break;
-        case 4:
-            timePerLevel = 15;
-            numberOfItemsPerLevel = 12;
-            backgroundImage = "background";
-            break;
-        case 5:
-            timePerLevel = 7;
-            numberOfItemsPerLevel = 6;
-            backgroundImage = "test";
-            break;
-        default:
-            console.error("Invalid level!");
-            return;
+function getLevelData(level) {
+    const data = levelData[level - 1];
+    if (!data) {
+        console.error("Invalid level!");
+        return;
     }
-    levelContainer.innerHTML = level;
+    timePerLevel = data.time;
+    numberOfItemsPerLevel = data.numberOfItems;
 }
 
 //////////////////// GENERAL ///////////////////////
@@ -386,12 +377,12 @@ function setupLevel(level) {
 /**
  * FUNCTION: Show Element By ID
  * Takes 2 arguments: 
- *      elementID -> id of the element you want to show or hide
- *      visibility -> show / hide
+ *      element -> id of the element you want to show or hide
+ *      show -> true / false
  */
-function showElementById(elementID, visibility) {
-    let element = document.getElementById(elementID);
-    element.style.visibility = (visibility === "show") ? "visible" : "hidden";
+
+function showElement(element, show) {
+    element.style.visibility = show ? "visible" : "hidden";
 }
 
 /**
@@ -401,4 +392,5 @@ function showElementById(elementID, visibility) {
 function clearElement(element) {
     element.innerHTML = "";
 }
+
 
