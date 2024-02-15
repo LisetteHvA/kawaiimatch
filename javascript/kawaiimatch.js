@@ -28,7 +28,8 @@ const // Game board html elements
     gameContainer = document.getElementById("gameContainer"),
 
     // Number of images within images folder to show as item
-    numberOfGameImages = 65;
+    // P40 - https://www.freepik.com/author/freepik/icons/kawaii-lineal-color_47?t=f&sign-up=google&page=40#uuid=f3bfb0bd-e723-4676-b6ae-1c1daa026382
+    numberOfGameImages = 75;
 
 // VARIABLES
 let matchingItem;
