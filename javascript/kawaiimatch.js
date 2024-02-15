@@ -28,7 +28,7 @@ const // Game board html elements
     gameContainer = document.getElementById("gameContainer"),
 
     // Number of images within images folder to show as item
-    numberOfGameImages = 55;
+    numberOfGameImages = 65;
 
 // VARIABLES
 let matchingItem;
