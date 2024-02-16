@@ -311,7 +311,8 @@ function gameEnd(gameFinish) {
     if (gameFinish == "winner") {
         audioFiles.winner.play();
         levelUp();
-        createNewButton("Next Level!", "endBoard", "setGame");
+        let levelName = "Play level " + level + "!";
+        createNewButton(levelName, "endBoard", "setGame");
     } else if (gameFinish == "lostlife2" || gameFinish == "lostlife1") {
         createNewButton("Retry level!", "endBoard", "setGame");
     } else if (gameFinish == "loser" || gameFinish == "slow") {
