@@ -248,21 +248,6 @@ function selectItem() {
 function getGameStatus() {
     if (stars === 0) {
         lostLife();
-        if (lifes === 6) {
-            gameEnd("lostlife6");
-        } else if (lifes === 5) {
-            gameEnd("lostlife5");
-        } else if (lifes === 4) {
-            gameEnd("lostlife4");
-        } else if (lifes === 3) {
-            gameEnd("lostlife3");
-        } else if (lifes === 2) {
-            gameEnd("lostlife2");
-        } else if (lifes === 1) {
-            gameEnd("lostlife1");
-        } else {
-            gameEnd("loser"); // lost the level
-        }
     } else if (stars === 5) { 
         gameEnd("winner"); // won of level
     }
@@ -286,21 +271,6 @@ function startTimer(duration) {
         } else {
             stopTimer();
             lostLife();
-            if (lifes === 6) {
-                gameEnd("lostlife6");
-            } else if (lifes === 5) {
-                gameEnd("lostlife5");
-            } else if (lifes === 4) {
-                gameEnd("lostlife4");
-            } else if (lifes === 3) {
-                gameEnd("lostlife3");
-            } else if (lifes === 2) {
-                gameEnd("lostlife2");
-            } else if (lifes === 1) {
-                gameEnd("lostlife1");
-            } else {
-                gameEnd("slow");
-            }
         }
     }, 1000);
 }
@@ -330,21 +300,26 @@ function gameEnd(gameFinish) {
     createBoard("endBoard");
     createBoardImage(gameFinish, "endBoard");
 
+    // WINNER - To next level
     if (gameFinish == "winner") {
         audioFiles.winner.play();
         levelUp();
         addLife();
         let levelName = "Play level " + level + "!";
         createNewButton(levelName, "endBoard", "setGame");
-    } else if (gameFinish == "lostlife2" || gameFinish == "lostlife1") {
-        createNewButton("Retry level!", "endBoard", "setGame");
-    } else if (gameFinish == "loser" || gameFinish == "slow") {
+    } 
+    // LOSER - Restart Game
+    else if (gameFinish == "loser" || gameFinish == "slow") {
         if (gameFinish == "slow") {
             audioFiles.slow.play();
         } else if (gameFinish == "loser") {
             audioFiles.loser.play();
         }
-        createNewButton("Restart Game!", "endBoard", "reloadPage");
+        createNewButton("Restart game!", "endBoard", "reloadPage");
+    } 
+    // LOST LIFE - Retry level
+    else {
+        createNewButton("Retry level!", "endBoard", "setGame");
     }
 }
 
@@ -360,9 +335,11 @@ function createBoardImage(imageMessage, boardName, imageAction) {
     selectedBoard.appendChild(boardImage);
     boardImage.addEventListener("mouseover", () =>{audioFiles.hover.play();});
     if (imageAction == "setGame") {
-        boardImage.addEventListener("click", () =>{setGame()});
+        boardImage.addEventListener("click", () =>{setGame();});
     } else if (imageAction == "reloadPage") {
         boardImage.addEventListener("click", () =>{window.location.reload();});
+    } else { // lost life 
+        boardImage.addEventListener("click", () =>{setGame();});
     }
 }
 
@@ -388,21 +365,6 @@ function createNewButton(buttonText, boardName, buttonAction) {
 //////////////////// LEVELS ///////////////////////
 
 /**
- * FUNCTION: GAME END
- * This function shows the endscreen of the game
- */
-function createNextLevelBoard() {
-    // Clear interval, container info, pause music
-    clearInterval(timerInterval);
-    clearElement(gameContainer);
-
-    // Create nextLevel board
-    createBoard("nextLevelBoard");
-    createBoardImage(level, "nextLevelBoard");
-    createNewButton("Next level!", "nextLevelBoard", "reloadPage");
-}
-
-/**
  * FUNCTION: LEVEL UP
  * Clears the content of an html element
  */
@@ -416,14 +378,16 @@ function levelUp() {
  */
 function lostLife() {
     lifes--;
+    if (lifes > 0 && lifes <= 6) {
+        gameEnd("lostlife" + lifes);
+    } else {
+        gameEnd("loser");
+    }
 }
 
 function addLife() {
-    if (level % 3 === 0) {
-        if (lifes < 7) {
-            console.log("add life");
-            lifes++;
-        }
+    if (level % 3 === 0 && lifes < 7) {
+        lifes++;
     }
 }
 
