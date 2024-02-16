@@ -248,7 +248,15 @@ function selectItem() {
 function getGameStatus() {
     if (stars === 0) {
         lostLife();
-        if (lifes === 2) {
+        if (lifes === 6) {
+            gameEnd("lostlife6");
+        } else if (lifes === 5) {
+            gameEnd("lostlife5");
+        } else if (lifes === 4) {
+            gameEnd("lostlife4");
+        } else if (lifes === 3) {
+            gameEnd("lostlife3");
+        } else if (lifes === 2) {
             gameEnd("lostlife2");
         } else if (lifes === 1) {
             gameEnd("lostlife1");
@@ -278,7 +286,15 @@ function startTimer(duration) {
         } else {
             stopTimer();
             lostLife();
-            if (lifes === 2) {
+            if (lifes === 6) {
+                gameEnd("lostlife6");
+            } else if (lifes === 5) {
+                gameEnd("lostlife5");
+            } else if (lifes === 4) {
+                gameEnd("lostlife4");
+            } else if (lifes === 3) {
+                gameEnd("lostlife3");
+            } else if (lifes === 2) {
                 gameEnd("lostlife2");
             } else if (lifes === 1) {
                 gameEnd("lostlife1");
@@ -404,7 +420,9 @@ function lostLife() {
 
 function addLife() {
     if (level % 3 === 0) {
+        console.log("add life");
         if (lifes < 7) {
+            console.log("add life");
             lifes++;
         }
     }
