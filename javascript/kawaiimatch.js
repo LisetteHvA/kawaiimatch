@@ -41,7 +41,6 @@ const audioFiles = {
 const
     metricsContainer = document.getElementById("metricsContainer"),
     starsContainer = document.getElementById("starsContainer"),
-    starsCountContainer = document.getElementById("starsCountContainer"),
     levelContainer = document.getElementById("levelContainer"),
     timerContainer = document.getElementById("timerContainer"),
     gameContainer = document.getElementById("gameContainer"),
@@ -81,24 +80,46 @@ function startGame() {
 }
 
 //////////////////// SET GAME UP ///////////////////////
-
 /**
- * FUNCTION: SET GAME
- * Creates the game boards
+ * Function: setGame()
+ *
+ * Description:
+ * Sets up the game environment for a level;
+ * 1. Plays the background audio.
+ * 2. Clears the content of the game container.
+ * 3. Retrieves level data based on the current level.
+ * 4. Chooses items for the game.
+ * 5. Creates game boards based on the selected items.
+ * 6. Starts the timer with the time limit for the current level.
+ * 7. Shows the metrics container.
+ * 8. Displays game metrics.
  */
 function setGame() {
-    clearElement(gameContainer);
-    showElement(metricsContainer, true);
-    getLevelData(level);
     audioFiles.background.play();
-    matchingItem = pickMatchingItem();
-    itemsListA = createItemsList();
-    itemsListB = createItemsList();
+    clearElement(gameContainer);
+    getLevelData(level);
+    chooseItems();
     createGameBoards();
+    startTimer(timePerLevel);
+    showElement(metricsContainer, true);
     showGameMetrics();
 }
 
+// Retrieves data for the specified level from the levelData array.
+function getLevelData(level) {
+    const data = levelData[level - 1];
+    timePerLevel = data.time;
+    numberOfItemsPerLevel = data.numberOfItems;
+}
 
+//Chooses items for the game.
+function chooseItems() {
+    matchingItem = pickMatchingItem();
+    itemsListA = createItemsList();
+    itemsListB = createItemsList();
+}
+
+//Creates game boards based on the selected items.
 function createGameBoards() {
     createBoard("board1");
     createBoard("board2");
@@ -106,30 +127,7 @@ function createGameBoards() {
     createItemImages(itemsListB, "board2");
 }
 
-/**
- * FUNCTION: show Game Metrics
- * Shows the current amount of stars, time and level
- */
-function showGameMetrics() {
-    showStars();
-    showLifes();
-    startTimer(timePerLevel);
-    levelContainer.innerHTML = level;
-}
-
-
-/**
- * FUNCTION: changeBackgroundImage
- * arguments: imageName the name of an image in the folder background-images 
- */
-function changeBackgroundImage(imageName) {
-    document.body.style.backgroundImage = `url('images/background-images/${imageName}')`;
-}
-
-/**
- * FUNCTION: CREATE EMPTY BOARD
- * This function creates the boards
- */
+// Creates an empty board element with a specified ID 
 function createBoard(boardId) {
     let board = document.createElement("div");
     board.id = boardId;
@@ -137,10 +135,7 @@ function createBoard(boardId) {
     gameContainer.appendChild(board);
 }
 
-/**
- * FUNCTION: PICK MATCHING ITEM
- * Function selects a random the item that is the match for the round
- */
+//Function selects a random the item that is the match for the round
 function pickMatchingItem() {
     return Math.floor(Math.random() * numberOfGameImages);
 }
@@ -154,7 +149,7 @@ function pickMatchingItem() {
 function createItemsList() {
     let numbers = [];
     while (numbers.length < numberOfItemsPerLevel - 1) {
-        let randomNumber = Math.floor(Math.random() * numberOfGameImages);
+        const randomNumber = Math.floor(Math.random() * numberOfGameImages);
         if (!numbers.includes(randomNumber) 
             && randomNumber != matchingItem
             && !itemsListA.includes(randomNumber)) {
@@ -164,59 +159,38 @@ function createItemsList() {
     // Add number of the matchingItem on random position in the list
     let randomIndex = Math.floor(Math.random() * numberOfItemsPerLevel - 1);
     numbers.splice(randomIndex, 0, matchingItem);
+
     return numbers;
 }
 
 /**
  * FUNCTION: CREATE ITEM IMAGES 
  * Arguments: (list, board)
- * This function creates an image for each item in the board
- * and add this image to the board
+ * Creates images for each item in the itemNumbers list and adds them to the specified board.
+ * Each image allows selection on click and plays a hover sound on mouseover.
  */
 function createItemImages(itemNumbers, boardId) {
-    let board = document.getElementById(boardId);
-    itemNumbers.forEach((itemNumber) => {
-        let itemImg = document.createElement("img");
-        itemImg.src = "images/item-images/" + itemNumber + ".png";
+    const board = document.getElementById(boardId);
+    for (const itemNumber of itemNumbers) {
+        const itemImg = new Image();
+        itemImg.src = `images/item-images/${itemNumber}.png`;
         itemImg.alt = itemNumber;
         itemImg.addEventListener("click", selectItem);
-        itemImg.addEventListener("mouseover", () =>{audioFiles.hover.play();});
+        itemImg.addEventListener("mouseover", () => audioFiles.hover.play());
         board.appendChild(itemImg);
-    });
+    }
 }
 
-//////////////////// STARS ///////////////////////
-
+//////////////////// GAME METRICS ///////////////////////
 /**
- * FUNCTION: CREATE STARS
- * This function creates images for the amount of stars
+ * FUNCTION: show Game Metrics
+ * Shows the current amount of stars, time left, level & lifes
  */
-function showStars() {
-    clearElement(starsContainer);
-
-    for (let i = 0; i < stars; i++) {
-        let starImg = document.createElement("img");
-        starImg.src = "images/site-images/star.png";
-        starsContainer.appendChild(starImg);
-    }
-
-    if (stars < 1) {
-        let starImg = document.createElement("img");
-        starImg.src = "images/site-images/stars.png";
-        starsContainer.appendChild(starImg);
-        stars = 0;
-    }
-    starsCountContainer.innerHTML = stars;
-}
-
-/**
- * FUNCTION: show Lifes
- * This function creates images for the amount of stars
- */
-function showLifes() {
+function showGameMetrics() {
+    starsContainer.innerHTML = stars < 1 ? 0 : stars;
     lifesContainer.innerHTML = lifes;
+    levelContainer.innerHTML = level;
 }
-
 
 //////////////////// PLAYING THE GAME ///////////////////////
 
@@ -234,7 +208,7 @@ function selectItem() {
     } else { // Wrong item
         audioFiles.incorrect.play();
         stars--;
-        showStars();
+        showGameMetrics();
     }
     getGameStatus();
 }
@@ -254,6 +228,7 @@ function getGameStatus() {
 }
 
 //////////////////// TIMER ///////////////////////
+
 
 /**
  * FUNCTION: START TIMER
@@ -378,7 +353,11 @@ function levelUp() {
  */
 function lostLife() {
     lifes--;
-    if (lifes > 0 && lifes <= 6) {
+    console.log(lifes);
+    if (lifes == 0) {
+        gameEnd("loser");
+    } else if (lifes > 0 && lifes <= 6) {
+        console.log("lifes 0 tot 7");
         gameEnd("lostlife" + lifes);
     } else {
         gameEnd("loser");
@@ -389,15 +368,6 @@ function addLife() {
     if (level % 3 === 0 && lifes < 7) {
         lifes++;
     }
-}
-
-/**
- * FUNCTION: SELECTS DATA FOR THE NEW LEVEL
- */
-function getLevelData(level) {
-    const data = levelData[level - 1];
-    timePerLevel = data.time;
-    numberOfItemsPerLevel = data.numberOfItems;
 }
 
 //////////////////// GENERAL ///////////////////////
@@ -420,5 +390,30 @@ function showElement(element, show) {
 function clearElement(element) {
     element.innerHTML = "";
 }
+
+
+// -------------------- O L D -- C O D E ---------------------- //
+
+
+// OLD CODE SHOW STARS:
+
+/*for (let i = 0; i < stars; i++) {
+    let starImg = document.createElement("img");
+    starImg.src = "images/site-images/star.png";
+    starsContainer.appendChild(starImg);
+}
+
+if (stars < 1) {
+    let starImg = document.createElement("img");
+    starImg.src = "images/site-images/stars.png";
+    starsContainer.appendChild(starImg);
+    stars = 0;
+}
+
+function changeBackgroundImage(imageName) {
+    document.body.style.backgroundImage = `url('images/background-images/${imageName}')`;
+}
+
+*/
 
 
