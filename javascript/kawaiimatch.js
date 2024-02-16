@@ -12,6 +12,7 @@ const levelData = [
     {time: 30, numberOfItems: 6},
     {time: 20, numberOfItems: 6},
     {time: 15, numberOfItems: 6},
+    // level winnen
     {time: 30, numberOfItems: 9},
     {time: 20, numberOfItems: 9},
     {time: 15, numberOfItems: 9},
@@ -316,6 +317,7 @@ function gameEnd(gameFinish) {
     if (gameFinish == "winner") {
         audioFiles.winner.play();
         levelUp();
+        addLife();
         let levelName = "Play level " + level + "!";
         createNewButton(levelName, "endBoard", "setGame");
     } else if (gameFinish == "lostlife2" || gameFinish == "lostlife1") {
@@ -393,11 +395,19 @@ function levelUp() {
 }
 
 /**
- * FUNCTION: LIFES DOWN
+ * FUNCTION: LIFES DOWN / UP
  * Clears the content of an html element
  */
 function lostLife() {
     lifes--;
+}
+
+function addLife() {
+    if (level % 3 === 0) {
+        if (lifes < 7) {
+            lifes++;
+        }
+    }
 }
 
 /**
