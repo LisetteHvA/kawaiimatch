@@ -350,17 +350,14 @@ function createNewButton(buttonText, boardName, buttonAction) {
 
 // ---------------------- LEVEL HANDELING --------------------------
 
-/**
- * FUNCTION: LEVEL UP
- * Clears the content of an html element
- */
+// Level + 1
 function levelUp() {
     level++;
 }
 
 // Lost life
 function lostLife(reason) {
-    console.log("lost life because :" + reason);
+    console.log("lost life because: " + reason);
     lifes--;
     if (lifes == 0) {
         gameEnd("loser");
@@ -372,6 +369,7 @@ function lostLife(reason) {
     }
 }
 
+// add life
 function addLife() {
     if (level % 3 === 0 && lifes < 7) {
         lifes++;
@@ -380,13 +378,7 @@ function addLife() {
 
 // ---------------------- GENERAL --------------------------
 
-/**
- * FUNCTION: Show Element By ID
- * Takes 2 arguments: 
- *      element -> id of the element you want to show or hide
- *      show -> true / false
- */
-
+// Show Element By ID --> Show: true/false
 function showElement(element, show) {
     element.style.visibility = show ? "visible" : "hidden";
 }
@@ -412,10 +404,6 @@ if (stars < 1) {
     starImg.src = "images/site-images/stars.png";
     starsContainer.appendChild(starImg);
     stars = 0;
-}
-
-function changeBackgroundImage(imageName) {
-    document.body.style.backgroundImage = `url('images/background-images/${imageName}')`;
 }
 
 */
