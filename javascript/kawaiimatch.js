@@ -61,9 +61,12 @@ let itemsListB = [];
 
 // Time
 let timePerLevel;
-let timeLeft = 0;
+let endTime;
+let remainingTime = 0;
 let timerInterval;
+let startPauseTime;
 let timerPaused = false;
+let totalPauseTime = 0;
 
 // Game metrics
 let stars = 0;
@@ -181,6 +184,50 @@ function createItemImages(itemNumbers, boardId) {
 
 // ---------------------- DURING PLAYING --------------------------
 
+// ---------------------- TIMER --------------------------
+
+// Starts a timer for the specified duration in seconds.
+function startTimer(duration) {
+    let startTime = Date.now();
+    endTime = startTime + (duration * 1000);
+    remainingTime = duration;
+    timerContainer.innerHTML = timePerLevel;
+
+    timerInterval = setInterval(() => {
+        if (!timerPaused) {
+            remainingTime = Math.round((endTime - Date.now()) / 1000);
+            remainingTime += totalPauseTime;
+            if (remainingTime > 0) {
+                timerContainer.innerHTML = remainingTime;
+            } else {
+                stopTimer();
+                lostLife("outOfTime");
+            }
+        }
+    }, 1000);
+}
+
+// Event listeners for the pause button
+pauseButton.addEventListener("click", toggleTimerPause);
+pauseButton.addEventListener("mouseover", () => audioFiles.hover.play());
+
+// Pause timer toggle
+function toggleTimerPause() {
+    if (!timerPaused) {
+        startPauseTime = Date.now();
+    } else {
+        endPauseTime = Date.now();
+        totalPauseTime += Math.round((endPauseTime - startPauseTime) / 1000);
+    }
+    timerPaused = !timerPaused;
+}
+
+// Stops the timer interval
+function stopTimer() {
+    clearInterval(timerInterval);
+    totalPauseTime = 0;
+}
+
 // ---------------------- GAME METRICS --------------------------
 
 //Shows the current amount of stars, time left, level & lifes
@@ -220,41 +267,6 @@ function getGameStatus() {
     } else if (stars === 5) { 
         gameEnd("winner"); // won of level
     }
-}
-
-// ---------------------- TIMER --------------------------
-
-// Starts a timer for the specified duration in seconds.
-function startTimer(duration) {
-    let startTime = Date.now();
-    let endTime = startTime + (duration * 1000);
-
-    timerContainer.innerHTML = timePerLevel;
-    timerInterval = setInterval(() => {
-        if (!timerPaused) {
-            let timeLeft = Math.round((endTime - Date.now()) / 1000);
-            if (timeLeft > 0) {
-                timerContainer.innerHTML = timeLeft;
-            } else {
-                stopTimer();
-                lostLife("outOfTime");
-            }
-        }
-    }, 1000);
-}
-
-// Event listeners for the pause button
-pauseButton.addEventListener("click", toggleTimerPause);
-pauseButton.addEventListener("mouseover", () => audioFiles.hover.play());
-
-// pause/resume timer
-function toggleTimerPause() {
-    timerPaused = !timerPaused;
-}
-
-// Stops the timer interval
-function stopTimer() {
-    clearInterval(timerInterval);
 }
 
 // ---------------------- END SCREEN --------------------------
