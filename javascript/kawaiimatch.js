@@ -162,7 +162,7 @@ function createItemsList() {
         }
     }
     // Add number of the matchingItem on random position in the list
-    let randomIndex = Math.floor(Math.random() * 9);
+    let randomIndex = Math.floor(Math.random() * numberOfItemsPerLevel - 1);
     numbers.splice(randomIndex, 0, matchingItem);
     return numbers;
 }
@@ -420,7 +420,6 @@ function lostLife() {
 
 function addLife() {
     if (level % 3 === 0) {
-        console.log("add life");
         if (lifes < 7) {
             console.log("add life");
             lifes++;
