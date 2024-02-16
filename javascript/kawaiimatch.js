@@ -241,9 +241,11 @@ function selectItem() {
  */
 function getGameStatus() {
     if (stars === 0) {
-        if (lifes > 1) {
-            lostLife();
-            gameEnd("lostlife");
+        lostLife();
+        if (lifes === 2) {
+            gameEnd("lostlife2");
+        } else if (lifes === 1) {
+            gameEnd("lostlife1");
         } else {
             gameEnd("loser"); // lost the level
         }
@@ -269,14 +271,12 @@ function startTimer(duration) {
             timerContainer.innerHTML = timeLeft;
         } else {
             stopTimer();
+            lostLife();
             if (lifes === 2) {
-                lostLife();
-                gameEnd("lostlife1");
+                gameEnd("lostlife2");
             } else if (lifes === 1) {
-                lostLife();
-                gameEnd("lostlife2")
-            }
-            else {
+                gameEnd("lostlife1");
+            } else {
                 gameEnd("slow");
             }
         }
@@ -298,7 +298,6 @@ function stopTimer() {
  * This function shows the endscreen of the game
  */
 function gameEnd(gameFinish) {
-    console.log("gameFinish is: " + gameFinish);
     clearInterval(timerInterval);
     showElement(metricsContainer, false);
     clearElement(gameContainer);
@@ -313,12 +312,9 @@ function gameEnd(gameFinish) {
         audioFiles.winner.play();
         levelUp();
         createNewButton("Next Level!", "endBoard", "setGame");
-    } else if (gameFinish == "lostlife2") {
+    } else if (gameFinish == "lostlife2" || gameFinish == "lostlife1") {
         createNewButton("Retry level!", "endBoard", "setGame");
-    } else if (gameFinish == "lostlife1") {
-        createNewButton("Retry level!", "endBoard", "setGame");
-    }else if (gameFinish == "loser" || gameFinish == "slow") {
-        console.log("hier niet komen");
+    } else if (gameFinish == "loser" || gameFinish == "slow") {
         if (gameFinish == "slow") {
             audioFiles.slow.play();
         } else if (gameFinish == "loser") {
@@ -403,10 +399,6 @@ function lostLife() {
  */
 function getLevelData(level) {
     const data = levelData[level - 1];
-    if (!data) {
-        console.error("Invalid level!");
-        return;
-    }
     timePerLevel = data.time;
     numberOfItemsPerLevel = data.numberOfItems;
 }
