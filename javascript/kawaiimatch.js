@@ -12,15 +12,15 @@ const levelData = [
     {time: 30, numberOfItems: 6},
     {time: 20, numberOfItems: 6},
     {time: 15, numberOfItems: 6},
-    // level winnen
+
     {time: 30, numberOfItems: 9},
     {time: 20, numberOfItems: 9},
     {time: 15, numberOfItems: 9},
-    // level winnen
+
     {time: 30, numberOfItems: 12},
     {time: 20, numberOfItems: 12},
     {time: 15, numberOfItems: 12},
-    // level winnen
+
     {time: 30, numberOfItems: 15},
     {time: 20, numberOfItems: 15},
     {time: 15, numberOfItems: 15},
@@ -45,33 +45,36 @@ const
     timerContainer = document.getElementById("timerContainer"),
     gameContainer = document.getElementById("gameContainer"),
     lifesContainer = document.getElementById("lifesContainer"),
+    pauseButton = document.getElementById("pauseButton"),
 
     // Number of images within images folder to show as item
     // P54 - https://www.freepik.com/author/freepik/icons/kawaii-lineal-color_47?t=f&sign-up=google&page=40#uuid=f3bfb0bd-e723-4676-b6ae-1c1daa026382
     numberOfGameImages = 105;
 
 // VARIABLES
+// Level info
+let level = 1;
+let numberOfItemsPerLevel;
 let matchingItem;
 let itemsListA = [];
 let itemsListB = [];
+
+// Time
+let timePerLevel;
 let timeLeft = 0;
 let timerInterval;
+let timerPaused = false;
+
+// Game metrics
 let stars = 0;
-let level = 1;
-let timePerLevel;
-let numberOfItemsPerLevel;
-let backgroundImage;
 let lifes = 3;
 
-//////////////////// START GAME ///////////////////////
+// ---------------------- BEFORE PLAYING --------------------------
 window.onload = function() {
     startGame();
 }
 
-/**
- * FUNCTION: START GAME
- * Creates the game boards
- */
+// Shows screen for the game
 function startGame() {
     showElement(metricsContainer, false);
     createBoard("startBoard");
@@ -79,21 +82,26 @@ function startGame() {
     createNewButton("Play Game", "startBoard", "setGame");
 }
 
-//////////////////// SET GAME UP ///////////////////////
-/**
- * Function: setGame()
- *
- * Description:
- * Sets up the game environment for a level;
- * 1. Plays the background audio.
- * 2. Clears the content of the game container.
- * 3. Retrieves level data based on the current level.
- * 4. Chooses items for the game.
- * 5. Creates game boards based on the selected items.
- * 6. Starts the timer with the time limit for the current level.
- * 7. Shows the metrics container.
- * 8. Displays game metrics.
- */
+// ---------------------- LOAD LEVEL --------------------------
+
+// Load the level if it exists
+function loadLevel(level) {
+    try {
+        // Check if the level is within the range of available levels
+        const numberOfLevels = levelData.length;
+        if (level > numberOfLevels) {
+            throw new Error('Level ' + level + ' does not exist. Please choose a level within the available range.');
+        }
+        // Load the game environment for the specified level
+        setGame();
+    } catch (error) {
+        console.error('Error:', error.message);
+    }
+}
+
+// ---------------------- SET GAME UP --------------------------
+
+// Sets up the game environment for a level;
 function setGame() {
     audioFiles.background.play();
     clearElement(gameContainer);
@@ -106,7 +114,7 @@ function setGame() {
 }
 
 // Retrieves data for the specified level from the levelData array.
-function getLevelData(level) {
+function getLevelData() {
     const data = levelData[level - 1];
     timePerLevel = data.time;
     numberOfItemsPerLevel = data.numberOfItems;
@@ -135,17 +143,12 @@ function createBoard(boardId) {
     gameContainer.appendChild(board);
 }
 
-//Function selects a random the item that is the match for the round
+//Selects a random the item that is the match for the round
 function pickMatchingItem() {
     return Math.floor(Math.random() * numberOfGameImages);
 }
 
-/**
- * FUNCTION: CREATE ITEMS LIST 
- * Function that creates a list of 9 numbers, of which 1 is the number
- * of the machtingItem. The other 8 numbers are unique.
- * returns: list of numbers.
- */
+//Generates a list of unique item numbers for the game, including the matching item.
 function createItemsList() {
     let numbers = [];
     while (numbers.length < numberOfItemsPerLevel - 1) {
@@ -163,12 +166,7 @@ function createItemsList() {
     return numbers;
 }
 
-/**
- * FUNCTION: CREATE ITEM IMAGES 
- * Arguments: (list, board)
- * Creates images for each item in the itemNumbers list and adds them to the specified board.
- * Each image allows selection on click and plays a hover sound on mouseover.
- */
+// Adds icons for all chosen items to the specified board.
 function createItemImages(itemNumbers, boardId) {
     const board = document.getElementById(boardId);
     for (const itemNumber of itemNumbers) {
@@ -181,24 +179,24 @@ function createItemImages(itemNumbers, boardId) {
     }
 }
 
-//////////////////// GAME METRICS ///////////////////////
-/**
- * FUNCTION: show Game Metrics
- * Shows the current amount of stars, time left, level & lifes
- */
+// ---------------------- DURING PLAYING --------------------------
+
+// ---------------------- GAME METRICS --------------------------
+
+//Shows the current amount of stars, time left, level & lifes
 function showGameMetrics() {
-    starsContainer.innerHTML = stars < 1 ? 0 : stars;
+    starsContainer.innerHTML = stars;
     lifesContainer.innerHTML = lifes;
     levelContainer.innerHTML = level;
 }
 
-//////////////////// PLAYING THE GAME ///////////////////////
+function updateStars() {
+    starsContainer.innerHTML = stars < 1 ? 0 : stars;
+}
 
-/**
- * FUNCTION: SELECT ITEM
- * When an item is selected it checks if it is correct or wrong.
- * It updates the scorebord and lifes.
- */
+// ---------------------- SELECT ITEM --------------------------
+
+// When an item is selected it checks if it is correct or wrong.
 function selectItem() {
     if (this.alt == matchingItem) { // Correct item
         audioFiles.correct.play();
@@ -208,57 +206,58 @@ function selectItem() {
     } else { // Wrong item
         audioFiles.incorrect.play();
         stars--;
-        showGameMetrics();
+        updateStars();
     }
     getGameStatus();
 }
 
-///////////// GAME STATUS | WINNER/LOSER ////////////////
+// ---------------------- GAME STATUS --------------------------
 
-/**
- * FUNCTION: CHECK GAME STATUS
- * Checks if winner/loser
- */
+// Checks if winner/loser
 function getGameStatus() {
     if (stars === 0) {
-        lostLife();
+        lostLife("noStarsLeft and wrong choice");
     } else if (stars === 5) { 
         gameEnd("winner"); // won of level
     }
 }
 
-//////////////////// TIMER ///////////////////////
+// ---------------------- TIMER --------------------------
 
-
-/**
- * FUNCTION: START TIMER
- * Starts a timer for the specified duration in seconds.
- * If the time is up,it goes to gameEnd slow.
- */
+// Starts a timer for the specified duration in seconds.
 function startTimer(duration) {
     let startTime = Date.now();
     let endTime = startTime + (duration * 1000);
 
+    timerContainer.innerHTML = timePerLevel;
     timerInterval = setInterval(() => {
-        let timeLeft = Math.round((endTime - Date.now()) / 1000);
-        if (timeLeft > 0) {
-            timerContainer.innerHTML = timeLeft;
-        } else {
-            stopTimer();
-            lostLife();
+        if (!timerPaused) {
+            let timeLeft = Math.round((endTime - Date.now()) / 1000);
+            if (timeLeft > 0) {
+                timerContainer.innerHTML = timeLeft;
+            } else {
+                stopTimer();
+                lostLife("outOfTime");
+            }
         }
     }, 1000);
 }
 
-/**
- * FUNCTION: STOP TIMER
- * Stops the timer interval
- */
+// Event listeners for the pause button
+pauseButton.addEventListener("click", toggleTimerPause);
+pauseButton.addEventListener("mouseover", () => audioFiles.hover.play());
+
+// pause/resume timer
+function toggleTimerPause() {
+    timerPaused = !timerPaused;
+}
+
+// Stops the timer interval
 function stopTimer() {
     clearInterval(timerInterval);
 }
 
-//////////////////// GAME END SCREEN ///////////////////////
+// ---------------------- END SCREEN --------------------------
 
 /**
  * FUNCTION: GAME END
@@ -337,7 +336,7 @@ function createNewButton(buttonText, boardName, buttonAction) {
     }
 }
 
-//////////////////// LEVELS ///////////////////////
+// ---------------------- LEVEL HANDELING --------------------------
 
 /**
  * FUNCTION: LEVEL UP
@@ -347,13 +346,10 @@ function levelUp() {
     level++;
 }
 
-/**
- * FUNCTION: LIFES DOWN / UP
- * Clears the content of an html element
- */
-function lostLife() {
+// Lost life
+function lostLife(reason) {
+    console.log("lost life because :" + reason);
     lifes--;
-    console.log(lifes);
     if (lifes == 0) {
         gameEnd("loser");
     } else if (lifes > 0 && lifes <= 6) {
@@ -370,7 +366,7 @@ function addLife() {
     }
 }
 
-//////////////////// GENERAL ///////////////////////
+// ---------------------- GENERAL --------------------------
 
 /**
  * FUNCTION: Show Element By ID
@@ -383,14 +379,10 @@ function showElement(element, show) {
     element.style.visibility = show ? "visible" : "hidden";
 }
 
-/**
- * FUNCTION: CLEAR ELEMENT
- * Clears the content of an html element
- */
+// Clears the content of an html element
 function clearElement(element) {
     element.innerHTML = "";
 }
-
 
 // -------------------- O L D -- C O D E ---------------------- //
 
