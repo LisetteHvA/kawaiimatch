@@ -15,12 +15,14 @@ const levelData = [
     {time: 30, numberOfItems: 9},
     {time: 20, numberOfItems: 9},
     {time: 15, numberOfItems: 9},
+    // level winnen
     {time: 30, numberOfItems: 12},
     {time: 20, numberOfItems: 12},
     {time: 15, numberOfItems: 12},
-    {time: 30, numberOfItems: 12},
-    {time: 20, numberOfItems: 12},
-    {time: 15, numberOfItems: 12},
+    // level winnen
+    {time: 30, numberOfItems: 15},
+    {time: 20, numberOfItems: 15},
+    {time: 15, numberOfItems: 15},
 ];
 
 // AUDIO FILES
