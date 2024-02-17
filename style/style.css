@@ -137,22 +137,19 @@ footer {
 
 /* START BOARD & END BOARD */
 
-#endBoard,
-#startBoard {
+#infoScreen {
     padding: 10px;
     height: auto;
 }
 
-#endBoard img,
-#startBoard img {
+#infoScreen img {
     width: 100%;
     height: auto;
     border-radius: 2em;
     margin-bottom: 1em;
 }
 
-#endBoard img:hover,
-#startBoard img:hover {
+#infoScreen img:hover {
     transform: rotate(0deg);
 }
 

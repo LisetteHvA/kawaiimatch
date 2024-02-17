@@ -6,27 +6,25 @@
  *              When a user clicks a wrong item, its game over, 
  *              unles you have a star, then you lose it.
  */
+// ---------------------- LEVEL DATA --------------------------
 
-// CONSTANTS
 const levelData = [
     {time: 30, numberOfItems: 6},
     {time: 20, numberOfItems: 6},
     {time: 15, numberOfItems: 6},
-
     {time: 30, numberOfItems: 9},
     {time: 20, numberOfItems: 9},
     {time: 15, numberOfItems: 9},
-
     {time: 30, numberOfItems: 12},
     {time: 20, numberOfItems: 12},
     {time: 15, numberOfItems: 12},
-
     {time: 30, numberOfItems: 15},
     {time: 20, numberOfItems: 15},
     {time: 15, numberOfItems: 15},
 ];
 
-// AUDIO FILES
+// ---------------------- AUDIO FILES --------------------------
+
 const audioFiles = {
     background: new Audio("sounds/background.mp3"),
     hover: new Audio("sounds/hover.mp3"),
@@ -37,7 +35,8 @@ const audioFiles = {
     slow: new Audio("sounds/slow.mp3"),
 };
 
-// DOM ELEMENTS
+// ---------------------- DOM ELEMENTS --------------------------
+
 const
     metricsContainer = document.getElementById("metricsContainer"),
     starsContainer = document.getElementById("starsContainer"),
@@ -45,13 +44,22 @@ const
     timerContainer = document.getElementById("timerContainer"),
     gameContainer = document.getElementById("gameContainer"),
     lifesContainer = document.getElementById("lifesContainer"),
-    pauseButton = document.getElementById("pauseButton"),
+    pauseButton = document.getElementById("pauseButton");
 
-    // Number of images within images folder to show as item
-    // P54 - https://www.freepik.com/author/freepik/icons/kawaii-lineal-color_47?t=f&sign-up=google&page=40#uuid=f3bfb0bd-e723-4676-b6ae-1c1daa026382
-    numberOfGameImages = 105;
+// ---------------------- IMAGES -------------------------- 
+
+// Number of images within images folder to show as item
+// P54 - https://www.freepik.com/author/freepik/icons/kawaii-lineal-color_47?t=f&sign-up=google&page=40#uuid=f3bfb0bd-e723-4676-b6ae-1c1daa026382
+const numberOfGameImages = 105;
+
+// ---------------------- GAME SETTINGS -------------------------- 
+// CONSTANTS
+const requiredStarsForLevelUp = 5;
+const numberOfLevels = levelData.length;
+console.log(numberOfLevels);
 
 // VARIABLES
+
 // Level info
 let level = 1;
 let numberOfItemsPerLevel;
@@ -72,6 +80,45 @@ let totalPauseTime = 0;
 let stars = 0;
 let lifes = 3;
 
+
+// ---------------------- INFO SCREEN DATA --------------------------
+
+function currentLevel() {
+    return "Play level " + (level + 1) + "!";
+}
+let infoScreen = {
+    start: {
+        image: "start.gif",
+        buttonText: "Start game!",
+        action: "loadLevel();",
+        audio: "",
+    },
+    nextLevel: {
+        image: "winner.gif",
+        buttonText: "Play next level",
+        action: "loadLevel();",
+        audio: "sounds/correct.mp3",
+    },
+    lostLife: {
+        image: "lostlife1.gif", //verschillende versies in functie?
+        buttonText: "Retry this level!",
+        action: "loadLevel()",
+        audio: "sounds/loser.mp3", // TO DO
+    },
+    outOfTime: {
+        image: "slow.gif",
+        buttonText: "Retry this level!",
+        action: "setGame();", // misschien ook load level?
+        audio: "sounds/slow.mp3",
+    },
+    gameOver: {
+        image: "loser.gif",
+        buttonText: "Restart game!",
+        action: "--window.location.reload();",
+        audio: "sounds/loser.mp3",
+    },
+};
+
 // ---------------------- BEFORE PLAYING --------------------------
 window.onload = function() {
     startGame();
@@ -79,10 +126,7 @@ window.onload = function() {
 
 // Shows screen for the game
 function startGame() {
-    showElement(metricsContainer, false);
-    createBoard("startBoard");
-    createBoardImage("start", "startBoard", "setGame");
-    createNewButton("Play Game", "startBoard", "setGame");
+    showInfoScreen("start");
 }
 
 // ---------------------- LOAD LEVEL --------------------------
@@ -91,7 +135,6 @@ function startGame() {
 function loadLevel(level) {
     try {
         // Check if the level is within the range of available levels
-        const numberOfLevels = levelData.length;
         if (level > numberOfLevels) {
             throw new Error('Level ' + level + ' does not exist. Please choose a level within the available range.');
         }
@@ -176,7 +219,7 @@ function createItemImages(itemNumbers, boardId) {
         const itemImg = new Image();
         itemImg.src = `images/item-images/${itemNumber}.png`;
         itemImg.alt = itemNumber;
-        itemImg.addEventListener("click", selectItem);
+        itemImg.addEventListener("click", checkSelectedItem);
         itemImg.addEventListener("mouseover", () => audioFiles.hover.play());
         board.appendChild(itemImg);
     }
@@ -201,7 +244,7 @@ function startTimer(duration) {
                 timerContainer.innerHTML = remainingTime;
             } else {
                 stopTimer();
-                lostLife("outOfTime");
+                lostLife();
             }
         }
     }, 1000);
@@ -228,6 +271,46 @@ function stopTimer() {
     totalPauseTime = 0;
 }
 
+// ---------------------- CHECK THE SELECTED ITEM --------------------------
+
+// Check if the selected item is te matching item
+function checkSelectedItem() {
+    if (this.alt == matchingItem) {
+        handleCorrectChoice();
+    } else {
+        handleIncorrectChoice();
+    }
+}
+
+// Handles if the correct item is selected
+function handleCorrectChoice() {
+    audioFiles.correct.play();
+    stopTimer();
+    earnStar();
+    readyForNextLevel();
+}
+
+// Handles if the incorrect item is selected
+function handleIncorrectChoice() {
+    audioFiles.incorrect.play();
+    if (enoughStarsToReplayRound()) { 
+        // lose a star and replay round
+        loseStar();
+        setGame();
+    } else { 
+        // lose a life and replay round
+        lostLife();
+        if (enoughLifesToReplayRound()) {
+            lostLife();
+        } else {
+            //Game Over if there is no life left
+            if (lifes === 0) {
+                gameOver();
+            }
+        }
+    }
+}
+
 // ---------------------- GAME METRICS --------------------------
 
 //Shows the current amount of stars, time left, level & lifes
@@ -237,143 +320,76 @@ function showGameMetrics() {
     levelContainer.innerHTML = level;
 }
 
-function updateStars() {
-    starsContainer.innerHTML = stars < 1 ? 0 : stars;
-}
+// ---------------------- LEVEL UP --------------------------
 
-// ---------------------- SELECT ITEM --------------------------
-
-// When an item is selected it checks if it is correct or wrong.
-function selectItem() {
-    if (this.alt == matchingItem) { // Correct item
-        audioFiles.correct.play();
-        stars++;
-        stopTimer();
-        setGame();
-    } else { // Wrong item
-        audioFiles.incorrect.play();
-        stars--;
-        updateStars();
-    }
-    getGameStatus();
-}
-
-// ---------------------- GAME STATUS --------------------------
-
-// Checks if winner/loser
-function getGameStatus() {
-    if (stars === 0) {
-        lostLife("noStarsLeft and wrong choice");
-    } else if (stars === 5) { 
-        gameEnd("winner"); // won of level
-    }
-}
-
-// ---------------------- END SCREEN --------------------------
-
-/**
- * FUNCTION: GAME END
- * This function shows the endscreen of the game
- */
-function gameEnd(gameFinish) {
-    clearInterval(timerInterval);
-    showElement(metricsContainer, false);
-    clearElement(gameContainer);
-    audioFiles.background.pause();
-    stars = 0;
-
-    // Create end board
-    createBoard("endBoard");
-    createBoardImage(gameFinish, "endBoard");
-
-    // WINNER - To next level
-    if (gameFinish == "winner") {
-        audioFiles.winner.play();
-        levelUp();
-        addLife();
-        let levelName = "Play level " + level + "!";
-        createNewButton(levelName, "endBoard", "setGame");
-    } 
-    // LOSER - Restart Game
-    else if (gameFinish == "loser" || gameFinish == "slow") {
-        if (gameFinish == "slow") {
-            audioFiles.slow.play();
-        } else if (gameFinish == "loser") {
-            audioFiles.loser.play();
-        }
-        createNewButton("Restart game!", "endBoard", "reloadPage");
-    } 
-    // LOST LIFE - Retry level
-    else {
-        createNewButton("Retry level!", "endBoard", "setGame");
-    }
-}
-
-/**
- * FUNCTION: CREATE BOARD IMAGE
- * Checks if gameOver, timeUp, winner, start and creates image,
- * image is added to endscreen
- */
-function createBoardImage(imageMessage, boardName, imageAction) {
-    let boardImage = document.createElement("img");
-    boardImage.src = "images/site-images/"+ imageMessage +".gif";
-    let selectedBoard = document.getElementById(boardName);
-    selectedBoard.appendChild(boardImage);
-    boardImage.addEventListener("mouseover", () =>{audioFiles.hover.play();});
-    if (imageAction == "setGame") {
-        boardImage.addEventListener("click", () =>{setGame();});
-    } else if (imageAction == "reloadPage") {
-        boardImage.addEventListener("click", () =>{window.location.reload();});
-    } else { // lost life 
-        boardImage.addEventListener("click", () =>{setGame();});
-    }
-}
-
-/**
- * FUNCTION: CREATE BUTTON
- * Adds it to info screen
- */
-function createNewButton(buttonText, boardName, buttonAction) {
-    let newButton = document.createElement("button");
-    newButton.innerText = buttonText;
-    let selectedBoard = document.getElementById(boardName);
-    selectedBoard.appendChild(newButton);
-    newButton.addEventListener("mouseover", () =>{audioFiles.hover.play();});
-
-    if (buttonAction == "setGame") {
-        newButton.addEventListener("click", () =>{setGame()});
-    }
-    else {
-        newButton.addEventListener("click", () =>{window.location.reload();});
-    }
-}
-
-// ---------------------- LEVEL HANDELING --------------------------
-
-// Level + 1
 function levelUp() {
     level++;
+    levelUpButtonTextUpdate();
+    resetStars();
+    showGameMetrics();
+    showInfoScreen("nextLevel");
 }
 
-// Lost life
-function lostLife(reason) {
-    console.log("lost life because: " + reason);
-    lifes--;
-    if (lifes == 0) {
-        gameEnd("loser");
-    } else if (lifes > 0 && lifes <= 6) {
-        console.log("lifes 0 tot 7");
-        gameEnd("lostlife" + lifes);
-    } else {
-        gameEnd("loser");
+function levelUpButtonTextUpdate() {
+    infoScreen.nextLevel.buttonText = "Play level " + (level) + "!";
+}
+
+// ---------------------- LIFES --------------------------
+
+function lostLife() {
+    if (lifes > 0) {
+        lifes--;
     }
+    showGameMetrics();
+    showInfoScreen("lostLife");
 }
 
-// add life
 function addLife() {
-    if (level % 3 === 0 && lifes < 7) {
+    if (level % 3 === 0) {
         lifes++;
     }
+    showGameMetrics();
+}
+
+// ---------------------- STARS --------------------------
+
+function earnStar() {
+    stars++;
+    showGameMetrics();
+}
+
+function loseStar() {
+    if (stars > 0) {
+        stars--;
+    }
+    showGameMetrics();
+}
+
+function resetStars() { // TO: check waar dit moet
+    stars = 0;
+    showGameMetrics();
+}
+
+// ---------------------- READY FOR NEXT LEVEL & GAME OVER CHECK --------------------------
+
+function readyForNextLevel() {
+    if (stars === requiredStarsForLevelUp) {
+        levelUp();
+    } else {
+        setGame(level);
+    }
+}
+
+function enoughStarsToReplayRound() {
+    return stars > 0;
+}
+
+function enoughLifesToReplayRound() {
+    return lifes > 0;
+}
+
+function gameOver() {
+    showInfoScreen("gameOver");
 }
 
 // ---------------------- GENERAL --------------------------
@@ -388,24 +404,68 @@ function clearElement(element) {
     element.innerHTML = "";
 }
 
-// -------------------- O L D -- C O D E ---------------------- //
+// ---------------------- INFO SCREEN --------------------------
 
+// show the information screen based on type
+// options: start | nextLevel | lostLife | outOfTime | gameOver
+// showInfoScreen(lostLife);
 
-// OLD CODE SHOW STARS:
-
-/*for (let i = 0; i < stars; i++) {
-    let starImg = document.createElement("img");
-    starImg.src = "images/site-images/star.png";
-    starsContainer.appendChild(starImg);
+function showInfoScreen(infoScreenType) {
+    emptyForInfoScreen();
+    console.log("showInfoScreen: " + infoScreenType);
+    let idata = infoScreenType;
+    let info = getInfoScreenData(idata);
+    console.log(info);
+    createBoard("infoScreen");
+    addInfoScreenAudio(info.audio);
+    addInfoScreenImage(info.image);
+    addInfoScreenButton(info.buttonText);
+    addInfoScreenAction(info.action);
 }
 
-if (stars < 1) {
-    let starImg = document.createElement("img");
-    starImg.src = "images/site-images/stars.png";
-    starsContainer.appendChild(starImg);
-    stars = 0;
+// Remove game board for the info screen
+function emptyForInfoScreen() {
+    showElement(metricsContainer, false);
+    clearElement(gameContainer);
 }
 
-*/
+// Get data for the info screen
+function getInfoScreenData(messageType) {
+    return infoScreen[messageType];
+}
 
+// play audio at info screen
+function addInfoScreenAudio(audio) {
+    if (audio != "") {
+        const audioElement = new Audio(audio);
+        audioElement.play();
+    }
+}
 
+// add image to info screen
+function addInfoScreenImage(image) {
+    let imgElement = document.createElement("img");
+    imgElement.src = "images/info-screen/"+ image;
+    imgElement.id = "infoScreenImage";
+    imgElement.addEventListener("mouseover", () =>{audioFiles.hover.play();});
+    let infoScreen = document.getElementById("infoScreen");
+    infoScreen.appendChild(imgElement);
+}
+
+// Add on click action to button and image on the info screen
+function addInfoScreenAction(action) {
+    let infoScreenImage = document.getElementById("infoScreen");
+    let infoScreenButton = document.getElementById("infoScreenButton");
+    infoScreenImage.addEventListener("click", () =>{eval(action)});
+    infoScreenButton.addEventListener("click", () =>{eval(action)});
+}
+
+// Add button to info screen with button text
+function addInfoScreenButton(buttonText) {
+    let infoScreenButton = document.createElement("button");
+    infoScreenButton.innerText = buttonText;
+    let selectedBoard = document.getElementById("infoScreen");
+    infoScreenButton.id = "infoScreenButton";
+    selectedBoard.appendChild(infoScreenButton);
+    infoScreenButton.addEventListener("mouseover", () =>{audioFiles.hover.play();});
+}
