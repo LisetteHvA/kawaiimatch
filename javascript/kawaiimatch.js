@@ -304,7 +304,6 @@ function handleIncorrectChoice() {
 
 //Shows the current amount of stars, time left, level & lifes
 function showGameMetrics() {
-    console.log("stars: "+ stars);
     starsContainer.textContent = stars;
     lifesContainer.textContent = lifes;
     levelContainer.textContent = level;
@@ -364,11 +363,6 @@ function earnStar() {
     showGameMetrics();
 }
 
-function resetStars() { // TO: check waar dit moet
-    //stars = 0;
-    showGameMetrics();
-}
-
 // ---------------------- READY FOR NEXT LEVEL & GAME OVER CHECK --------------------------
 
 function readyForNextLevel() {
@@ -422,12 +416,7 @@ function emptyForInfoScreen() {
     clearElement(gameContainer);
 }
 
-// Get data for the info screen
-function getInfoScreenData(messageType) {
-    return infoScreen[messageType];
-}
-
-// play audio at info screen
+// Play audio at info screen
 function addInfoScreenAudio(audio) {
     if (audio != "") {
         const audioElement = new Audio(audio);
@@ -435,7 +424,7 @@ function addInfoScreenAudio(audio) {
     }
 }
 
-// add image to info screen
+// Add image to info screen
 function addInfoScreenImage(image) {
     let imgElement = document.createElement("img");
     imgElement.src = "images/info-screen/"+ image;
