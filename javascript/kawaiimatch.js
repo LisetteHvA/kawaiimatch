@@ -89,16 +89,16 @@ let infoScreen = {
         audio: "",
     },
     nextLevel: {
-        image: "winner.gif",
+        image: "nextlevel.gif",
         buttonText: "Play next level",
         action: "loadLevel();",
         audio: "sounds/correct.mp3",
     },
     lostLife: {
-        image: "lostlife1.gif", //verschillende versies in functie?
+        image: "lostlife1.gif",
         buttonText: "Retry this level!",
-        action: "loadLevel();",
-        audio: "sounds/gameover.mp3", // TO DO
+        action: "setGame(false);",
+        audio: "sounds/gameover.mp3",
     },
     outOfTime: {
         image: "outoftime.gif",
@@ -111,6 +111,12 @@ let infoScreen = {
         buttonText: "Restart game!",
         action: "location.reload();",
         audio: "sounds/gameover.mp3",
+    },
+    winner: {
+        image: "winner.gif",
+        buttonText: "Restart game!",
+        action: "location.reload();",
+        audio: "sounds/winner.mp3",
     },
 };
 
@@ -298,6 +304,7 @@ function handleIncorrectChoice() {
 
 //Shows the current amount of stars, time left, level & lifes
 function showGameMetrics() {
+    console.log("metrics");
     starsContainer.innerHTML = stars;
     lifesContainer.innerHTML = lifes;
     levelContainer.innerHTML = level;
@@ -308,10 +315,9 @@ function showGameMetrics() {
 function levelUp() {
     level++;
     levelUpButtonTextUpdate();
-    resetStars();
     showGameMetrics();
     showInfoScreen("nextLevel");
-    addLifeCheck()
+    addLifeCheck();
 }
 
 function levelUpButtonTextUpdate() {
