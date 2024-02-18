@@ -31,8 +31,8 @@ const audioFiles = {
     correct: new Audio("sounds/correct.mp3"),
     incorrect: new Audio("sounds/incorrect.mp3"),
     winner: new Audio("sounds/winner.mp3"),
-    loser: new Audio("sounds/loser.mp3"),
-    slow: new Audio("sounds/slow.mp3"),
+    gameover: new Audio("sounds/gameover.mp3"),
+    slow: new Audio("sounds/outoftime.mp3"),
 };
 
 // ---------------------- DOM ELEMENTS --------------------------
@@ -98,19 +98,19 @@ let infoScreen = {
         image: "lostlife1.gif", //verschillende versies in functie?
         buttonText: "Retry this level!",
         action: "loadLevel();",
-        audio: "sounds/loser.mp3", // TO DO
+        audio: "sounds/gameover.mp3", // TO DO
     },
     outOfTime: {
-        image: "slow.gif",
+        image: "outoftime.gif",
         buttonText: "Retry this level!",
         action: "setGame(false);",
-        audio: "sounds/slow.mp3",
+        audio: "sounds/outoftime.mp3",
     },
     gameOver: {
-        image: "loser.gif",
+        image: "gameover.gif",
         buttonText: "Restart game!",
         action: "location.reload();",
-        audio: "sounds/loser.mp3",
+        audio: "sounds/gameover.mp3",
     },
 };
 
@@ -326,6 +326,7 @@ function lostLife(reason) {
         if (lifes > 0) {
             switch (reason) {
                 case "incorrectChoise":
+                    lostLifeInfoScreenUpdate();
                     showInfoScreen("lostLife");
                     break;
                 case "outOfTime":
@@ -336,6 +337,10 @@ function lostLife(reason) {
             showInfoScreen("gameOver");
         }
     }
+}
+
+function lostLifeInfoScreenUpdate() {
+    infoScreen.lostLife.image = "lostlife" + (lifes) + ".gif";
 }
 
 function addLife() {
