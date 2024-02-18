@@ -136,7 +136,7 @@ function startGame() {
 function loadLevel(level) {
     try {
         // Check if the level is within the range of available levels
-        if (level < numberOfLevels) {
+        if (level > numberOfLevels) {
             throw new Error('Level ' + level + ' does not exist. Please choose a level within the available range.');
         }
         // Load the game environment for the specified level
@@ -314,6 +314,7 @@ function showGameMetrics() {
 function levelUp() {
     level++;
     levelUpButtonTextUpdate();
+    resetStars();
     showGameMetrics();
     showInfoScreen("nextLevel");
     addLifeCheck();
@@ -363,9 +364,14 @@ function earnStar() {
     showGameMetrics();
 }
 
+function resetStars() {
+    stars = 0;
+}
+
 // ---------------------- READY FOR NEXT LEVEL & GAME OVER CHECK --------------------------
 
 function readyForNextLevel() {
+    console.log("ready for level up? stars: " + stars);
     if (stars === requiredStarsForLevelUp) {
         levelUp();
     } else {
@@ -377,7 +383,7 @@ function resetGameState() {
     clearInterval(timerInterval);
     timerPaused = false;
     totalPauseTime = 0;
-    //stars = 0;
+    stars = 0;
     lifes = 3;
     remainingTime = 0;
 }
