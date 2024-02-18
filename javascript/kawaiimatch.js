@@ -400,9 +400,7 @@ function clearElement(element) {
 
 function showInfoScreen(infoScreenType) {
     emptyForInfoScreen();
-    console.log("showInfoScreen: " + infoScreenType);
     let info = infoScreen[infoScreenType];
-    console.log(info);
     createBoard("infoScreen");
     addInfoScreenAudio(info.audio);
     addInfoScreenImage(info.image);
