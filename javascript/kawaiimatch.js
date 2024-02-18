@@ -371,11 +371,10 @@ function resetStars() {
 // ---------------------- READY FOR NEXT LEVEL & GAME OVER CHECK --------------------------
 
 function readyForNextLevel() {
-    console.log("ready for level up? stars: " + stars);
     if (stars === requiredStarsForLevelUp) {
         levelUp();
     } else {
-        setGame(level); // maybe this should go
+        setGame(level);
     }
 }
 
