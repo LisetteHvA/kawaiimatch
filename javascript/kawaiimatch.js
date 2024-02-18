@@ -91,7 +91,7 @@ let infoScreen = {
     nextLevel: {
         image: "nextlevel.gif",
         buttonText: "Play next level",
-        action: "loadLevel();",
+        action: "loadLevel(false);",
         audio: "sounds/correct.mp3",
     },
     lostLife: {
@@ -136,7 +136,7 @@ function startGame() {
 function loadLevel(level) {
     try {
         // Check if the level is within the range of available levels
-        if (level > numberOfLevels) {
+        if (level < numberOfLevels) {
             throw new Error('Level ' + level + ' does not exist. Please choose a level within the available range.');
         }
         // Load the game environment for the specified level
@@ -304,10 +304,10 @@ function handleIncorrectChoice() {
 
 //Shows the current amount of stars, time left, level & lifes
 function showGameMetrics() {
-    console.log("metrics");
-    starsContainer.innerHTML = stars;
-    lifesContainer.innerHTML = lifes;
-    levelContainer.innerHTML = level;
+    console.log("stars: "+ stars);
+    starsContainer.textContent = stars;
+    lifesContainer.textContent = lifes;
+    levelContainer.textContent = level;
 }
 
 // ---------------------- LEVEL UP --------------------------
@@ -365,7 +365,7 @@ function earnStar() {
 }
 
 function resetStars() { // TO: check waar dit moet
-    stars = 0;
+    //stars = 0;
     showGameMetrics();
 }
 
@@ -379,15 +379,11 @@ function readyForNextLevel() {
     }
 }
 
-function enoughStarsToReplayRound() {
-    return stars > 0;
-}
-
 function resetGameState() {
     clearInterval(timerInterval);
     timerPaused = false;
     totalPauseTime = 0;
-    stars = 0;
+    //stars = 0;
     lifes = 3;
     remainingTime = 0;
 }
