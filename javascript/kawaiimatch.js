@@ -9,7 +9,7 @@
 // ---------------------- LEVEL DATA --------------------------
 
 const levelData = [
-    {time: 5, numberOfItems: 6},
+    {time: 30, numberOfItems: 6},
     {time: 20, numberOfItems: 6},
     {time: 15, numberOfItems: 6},
     {time: 30, numberOfItems: 9},
@@ -311,6 +311,7 @@ function levelUp() {
     resetStars();
     showGameMetrics();
     showInfoScreen("nextLevel");
+    addLifeCheck()
 }
 
 function levelUpButtonTextUpdate() {
@@ -343,7 +344,7 @@ function lostLifeInfoScreenUpdate() {
     infoScreen.lostLife.image = "lostlife" + (lifes) + ".gif";
 }
 
-function addLife() {
+function addLifeCheck() {
     if (level % 3 === 0) {
         lifes++;
     }
