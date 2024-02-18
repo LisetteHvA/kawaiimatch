@@ -9,7 +9,7 @@
 // ---------------------- LEVEL DATA --------------------------
 
 const levelData = [
-    {time: 30, numberOfItems: 6},
+    {time: 5, numberOfItems: 6},
     {time: 20, numberOfItems: 6},
     {time: 15, numberOfItems: 6},
     {time: 30, numberOfItems: 9},
@@ -56,7 +56,6 @@ const numberOfGameImages = 105;
 // CONSTANTS
 const requiredStarsForLevelUp = 5;
 const numberOfLevels = levelData.length;
-console.log(numberOfLevels);
 
 // VARIABLES
 
@@ -80,12 +79,8 @@ let totalPauseTime = 0;
 let stars = 0;
 let lifes = 3;
 
-
 // ---------------------- INFO SCREEN DATA --------------------------
 
-function currentLevel() {
-    return "Play level " + (level + 1) + "!";
-}
 let infoScreen = {
     start: {
         image: "start.gif",
@@ -102,19 +97,19 @@ let infoScreen = {
     lostLife: {
         image: "lostlife1.gif", //verschillende versies in functie?
         buttonText: "Retry this level!",
-        action: "loadLevel()",
+        action: "loadLevel();",
         audio: "sounds/loser.mp3", // TO DO
     },
     outOfTime: {
         image: "slow.gif",
         buttonText: "Retry this level!",
-        action: "setGame();", // misschien ook load level?
+        action: "setGame(false);",
         audio: "sounds/slow.mp3",
     },
     gameOver: {
         image: "loser.gif",
         buttonText: "Restart game!",
-        action: "--window.location.reload();",
+        action: "location.reload();",
         audio: "sounds/loser.mp3",
     },
 };
@@ -148,9 +143,12 @@ function loadLevel(level) {
 // ---------------------- SET GAME UP --------------------------
 
 // Sets up the game environment for a level;
-function setGame() {
+function setGame(resetState) {
     audioFiles.background.play();
     clearElement(gameContainer);
+    if (resetState) {
+        resetGameState(); // Reset game state only if specified
+    }
     getLevelData(level);
     chooseItems();
     createGameBoards();
@@ -244,7 +242,7 @@ function startTimer(duration) {
                 timerContainer.innerHTML = remainingTime;
             } else {
                 stopTimer();
-                lostLife();
+                lostLife("outOfTime");
             }
         }
     }, 1000);
@@ -275,6 +273,7 @@ function stopTimer() {
 
 // Check if the selected item is te matching item
 function checkSelectedItem() {
+    stopTimer();
     if (this.alt == matchingItem) {
         handleCorrectChoice();
     } else {
@@ -285,7 +284,6 @@ function checkSelectedItem() {
 // Handles if the correct item is selected
 function handleCorrectChoice() {
     audioFiles.correct.play();
-    stopTimer();
     earnStar();
     readyForNextLevel();
 }
@@ -293,22 +291,7 @@ function handleCorrectChoice() {
 // Handles if the incorrect item is selected
 function handleIncorrectChoice() {
     audioFiles.incorrect.play();
-    if (enoughStarsToReplayRound()) { 
-        // lose a star and replay round
-        loseStar();
-        setGame();
-    } else { 
-        // lose a life and replay round
-        lostLife();
-        if (enoughLifesToReplayRound()) {
-            lostLife();
-        } else {
-            //Game Over if there is no life left
-            if (lifes === 0) {
-                gameOver();
-            }
-        }
-    }
+    lostLife("incorrectChoise");
 }
 
 // ---------------------- GAME METRICS --------------------------
@@ -336,12 +319,23 @@ function levelUpButtonTextUpdate() {
 
 // ---------------------- LIFES --------------------------
 
-function lostLife() {
+function lostLife(reason) {
     if (lifes > 0) {
         lifes--;
+        showGameMetrics();
+        if (enoughLifesToReplayRound()) {
+            switch (reason) {
+                case "incorrectChoise":
+                    showInfoScreen("lostLife");
+                    break;
+                case "outOfTime":
+                    showInfoScreen("outOfTime");
+                    break;
+            }
+        } else {
+            showInfoScreen("gameOver");
+        }
     }
-    showGameMetrics();
-    showInfoScreen("lostLife");
 }
 
 function addLife() {
@@ -358,13 +352,6 @@ function earnStar() {
     showGameMetrics();
 }
 
-function loseStar() {
-    if (stars > 0) {
-        stars--;
-    }
-    showGameMetrics();
-}
-
 function resetStars() { // TO: check waar dit moet
     stars = 0;
     showGameMetrics();
@@ -376,7 +363,7 @@ function readyForNextLevel() {
     if (stars === requiredStarsForLevelUp) {
         levelUp();
     } else {
-        setGame(level);
+        setGame(level); // maybe this should go
     }
 }
 
@@ -388,8 +375,19 @@ function enoughLifesToReplayRound() {
     return lifes > 0;
 }
 
-function gameOver() {
-    showInfoScreen("gameOver");
+function gameOverCheck() {
+    if (lifes === 0) {
+        showInfoScreen("gameOver");
+    }
+}
+
+function resetGameState() {
+    clearInterval(timerInterval); // Clear timer interval
+    timerPaused = false; // Reset timer paused state
+    totalPauseTime = 0; // Reset total pause time
+    stars = 0; // Reset stars
+    lifes = 3; // Reset lifes
+    remainingTime = 0; // Reset remaining time
 }
 
 // ---------------------- GENERAL --------------------------
@@ -408,13 +406,12 @@ function clearElement(element) {
 
 // show the information screen based on type
 // options: start | nextLevel | lostLife | outOfTime | gameOver
-// showInfoScreen(lostLife);
+// showInfoScreen(outOfTime);
 
 function showInfoScreen(infoScreenType) {
     emptyForInfoScreen();
     console.log("showInfoScreen: " + infoScreenType);
-    let idata = infoScreenType;
-    let info = getInfoScreenData(idata);
+    let info = infoScreen[infoScreenType];
     console.log(info);
     createBoard("infoScreen");
     addInfoScreenAudio(info.audio);
