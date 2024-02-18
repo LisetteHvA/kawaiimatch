@@ -81,6 +81,8 @@ let lifes = 3;
 
 // ---------------------- INFO SCREEN DATA --------------------------
 
+// FIND THE RIGHT SOUNDS
+
 let infoScreen = {
     start: {
         image: "start.gif",
@@ -99,6 +101,12 @@ let infoScreen = {
         buttonText: "Retry this level!",
         action: "setGame(false);",
         audio: "sounds/gameover.mp3",
+    },
+    earnedLife: {
+        image: "earnedlife.gif",
+        buttonText: "Play next level",
+        action: "setGame(false);",
+        audio: "sounds/correct.mp3",
     },
     outOfTime: {
         image: "outoftime.gif",
@@ -382,7 +390,7 @@ function resetGameState() {
     clearInterval(timerInterval);
     timerPaused = false;
     totalPauseTime = 0;
-    stars = 0;
+    //stars = 0;
     lifes = 3;
     remainingTime = 0;
 }
