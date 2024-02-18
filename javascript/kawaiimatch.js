@@ -323,7 +323,7 @@ function lostLife(reason) {
     if (lifes > 0) {
         lifes--;
         showGameMetrics();
-        if (enoughLifesToReplayRound()) {
+        if (lifes > 0) {
             switch (reason) {
                 case "incorrectChoise":
                     showInfoScreen("lostLife");
@@ -371,23 +371,13 @@ function enoughStarsToReplayRound() {
     return stars > 0;
 }
 
-function enoughLifesToReplayRound() {
-    return lifes > 0;
-}
-
-function gameOverCheck() {
-    if (lifes === 0) {
-        showInfoScreen("gameOver");
-    }
-}
-
 function resetGameState() {
-    clearInterval(timerInterval); // Clear timer interval
-    timerPaused = false; // Reset timer paused state
-    totalPauseTime = 0; // Reset total pause time
-    stars = 0; // Reset stars
-    lifes = 3; // Reset lifes
-    remainingTime = 0; // Reset remaining time
+    clearInterval(timerInterval);
+    timerPaused = false;
+    totalPauseTime = 0;
+    stars = 0;
+    lifes = 3;
+    remainingTime = 0;
 }
 
 // ---------------------- GENERAL --------------------------
