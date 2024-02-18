@@ -390,7 +390,7 @@ function resetGameState() {
     clearInterval(timerInterval);
     timerPaused = false;
     totalPauseTime = 0;
-    //stars = 0;
+    //stars = 0; // TO DO: SOLVE THIS PROBLEM WITH STARS
     lifes = 3;
     remainingTime = 0;
 }
