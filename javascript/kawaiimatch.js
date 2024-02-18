@@ -50,7 +50,7 @@ const
 
 // Number of images within images folder to show as item
 // P54 - https://www.freepik.com/author/freepik/icons/kawaii-lineal-color_47?t=f&sign-up=google&page=40#uuid=f3bfb0bd-e723-4676-b6ae-1c1daa026382
-const numberOfGameImages = 199;
+const numberOfGameImages = 200;
 
 // ---------------------- GAME SETTINGS -------------------------- 
 // CONSTANTS

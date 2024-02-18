@@ -27,7 +27,7 @@ h2 {
 }
 
 p {
-    font-size: 1.8em;
+    font-size: 1.6em;
     font-weight: 600;
     text-transform: uppercase;
     color: #fef280;
@@ -86,8 +86,8 @@ header p:hover {
 }
 
 #metricsContainer img {
-    width: 35px;
-    height: 35px;
+    width: 27px;
+    height: 27px;
     margin-right: 10px;
 }
 
