@@ -30,9 +30,9 @@ const audioFiles = {
     hover: new Audio("sounds/hover.mp3"),
     correct: new Audio("sounds/correct.mp3"),
     incorrect: new Audio("sounds/incorrect.mp3"),
-    winner: new Audio("sounds/winner.mp3"),
+    nextlevel: new Audio("sounds/winner.mp3"),
     gameover: new Audio("sounds/gameover.mp3"),
-    slow: new Audio("sounds/outoftime.mp3"),
+    outoftime: new Audio("sounds/outoftime.mp3"),
 };
 
 // ---------------------- DOM ELEMENTS --------------------------
