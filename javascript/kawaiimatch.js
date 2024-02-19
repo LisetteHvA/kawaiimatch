@@ -39,6 +39,7 @@ const audioFiles = {
 
 const
     metricsContainer = document.getElementById("metricsContainer"),
+    coinsContainer = document.getElementById("coinsContainer"),
     starsContainer = document.getElementById("starsContainer"),
     levelContainer = document.getElementById("levelContainer"),
     timerContainer = document.getElementById("timerContainer"),
@@ -78,6 +79,7 @@ let totalPauseTime = 0;
 // Game metrics
 let stars = 0;
 let lifes = 3;
+let coins = 0;
 
 // ---------------------- INFO SCREEN DATA --------------------------
 
@@ -142,16 +144,7 @@ function startGame() {
 
 // Load the level if it exists
 function loadLevel(level) {
-    try {
-        // Check if the level is within the range of available levels
-        if (level > numberOfLevels) {
-            throw new Error('Level ' + level + ' does not exist. Please choose a level within the available range.');
-        }
-        // Load the game environment for the specified level
-        setGame();
-    } catch (error) {
-        console.error('Error:', error.message);
-    }
+    setGame();
 }
 
 // ---------------------- SET GAME UP --------------------------
@@ -229,7 +222,7 @@ function createItemImages(itemNumbers, boardId) {
     const board = document.getElementById(boardId);
     for (const itemNumber of itemNumbers) {
         const itemImg = new Image();
-        itemImg.src = `images/item-images/${itemNumber}.png`;
+        itemImg.src = `images/items/${itemNumber}.png`;
         itemImg.alt = itemNumber;
         itemImg.addEventListener("click", checkSelectedItem);
         itemImg.addEventListener("mouseover", () => audioFiles.hover.play());
@@ -299,6 +292,7 @@ function checkSelectedItem() {
 function handleCorrectChoice() {
     audioFiles.correct.play();
     earnStar();
+    earnCoins();
     readyForNextLevel();
 }
 
@@ -312,6 +306,7 @@ function handleIncorrectChoice() {
 
 //Shows the current amount of stars, time left, level & lifes
 function showGameMetrics() {
+    coinsContainer.textContent = coins;
     starsContainer.textContent = stars;
     lifesContainer.textContent = lifes;
     levelContainer.textContent = level;
@@ -324,8 +319,16 @@ function levelUp() {
     levelUpButtonTextUpdate();
     resetStars();
     showGameMetrics();
-    showInfoScreen("nextLevel");
-    addLifeCheck();
+    //addLifeCheck(); TO DO: REMOVE?
+
+    // Check if the level is within the range of available levels
+    if (level > numberOfLevels) {
+        console.log("geen levels meer");
+        showInfoScreen("winner");
+    } else {
+        console.log("wel nog levels");
+        showInfoScreen("nextLevel");
+    }
 }
 
 function levelUpButtonTextUpdate() {
@@ -358,12 +361,13 @@ function lostLifeInfoScreenUpdate() {
     infoScreen.lostLife.image = "lostlife" + (lifes) + ".gif";
 }
 
-function addLifeCheck() {
+// TO DO: REMOVE THIS
+/*function addLifeCheck() {
     if (level % 3 === 0) {
         lifes++;
     }
     showGameMetrics();
-}
+}*/
 
 // ---------------------- STARS --------------------------
 
@@ -374,6 +378,20 @@ function earnStar() {
 
 function resetStars() {
     stars = 0;
+}
+
+// ---------------------- STARS --------------------------
+
+function earnCoins() {
+    let amount = (Math.floor((level * remainingTime)/2))
+    console.log("earned coins: " + amount);
+    coins += amount;
+    showGameMetrics();
+}
+
+function spendCoins(amount) {
+    coins += amount;
+    showGameMetrics();
 }
 
 // ---------------------- READY FOR NEXT LEVEL & GAME OVER CHECK --------------------------
@@ -440,7 +458,7 @@ function addInfoScreenAudio(audio) {
 // Add image to info screen
 function addInfoScreenImage(image) {
     let imgElement = document.createElement("img");
-    imgElement.src = "images/info-screen/"+ image;
+    imgElement.src = "images/info/"+ image;
     imgElement.id = "infoScreenImage";
     imgElement.addEventListener("mouseover", () =>{audioFiles.hover.play();});
     let infoScreen = document.getElementById("infoScreen");
