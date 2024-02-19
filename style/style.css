@@ -143,7 +143,6 @@ footer {
 .board {
     width: auto;
     max-width: 500px;
-    min-height: 500px;
     height: auto;
     padding: .8em;
     background-color: #ffffffa6;
@@ -158,21 +157,19 @@ footer {
     flex-shrink: 1;
 }
 
-#board2 {
-    margin-left: 0;
-}
-
 .board img {
     width: 120px; 
     height: 120px;
     background-color: f7dfe0;
     padding: 10px;
     border-radius: 10px;
+    margin: 10px;
 }
 
+/*
 #pauseButton {
     display: none;
-}
+}*/
 
 /* INFO SCREEN */
 
@@ -236,7 +233,7 @@ button:hover {
     }
 
     header h1 img {
-        width: 125px;
+        width: 100%;
     }
 
     #metricsContainer img {
@@ -248,20 +245,27 @@ button:hover {
     }
 
     .board {
-        padding: 10px;
-        height: auto;
         min-height: 0;
-    }
-    
-    .board img {
-        width: 80px;
-        height: 80px;
-        margin: 6px;
+        margin: 10px;
     }
 
-    .board:nth-of-type(2) {
-        margin-top: 0;
-        margin-bottom: 0;
+    #board1 img, 
+    #board2 img {
+        flex: 1 1 calc(33.33% - 10px); 
+        max-width: calc(33.33% - 10px);
+        height: auto;
+        max-width: 75px;
+        max-height: 75px;
+        margin: 5px;
+    }
+
+    .small-img {
+        max-width: 70px;
+    }
+
+    .tiny-img {
+        max-width: 60px;
+        margin: 0;
     }
 
     footer {
