@@ -10,6 +10,7 @@
 
 body {
     min-height: 100vh;
+    height: 100vh;
     background: rgb(255, 211, 218);
     background-image: url("../images/brand/background.png");
     background-size: cover;
@@ -153,36 +154,32 @@ footer {
     align-content: space-around;
     border: 3px solid white;
     border-radius: 2em;
-    margin: 0 .8em;
+    margin: 1em;
     flex-shrink: 1;
 }
 
 .board img {
     width: 120px; 
     height: 120px;
-    background-color: f7dfe0;
     padding: 10px;
     border-radius: 10px;
     margin: 10px;
 }
 
-/*
-#pauseButton {
-    display: none;
-}*/
-
 /* INFO SCREEN */
 
 #infoScreen {
-    padding: 10px;
+    height: 50vh;
+    max-width: 50vh;
     height: auto;
+    padding: 0;
 }
 
 #infoScreen img {
     width: 100%;
     height: auto;
     border-radius: 2em;
-    margin-bottom: 1em;
+    margin: 0;
 }
 
 #infoScreen img:hover {
@@ -217,6 +214,13 @@ button:hover {
     .board img:hover {
         border: 5px solid #505155;
         transform: rotate(4deg);
+        background-color: #e8ecf9c2;
+        border-color: white;
+    }
+
+    #infoScreen img:hover {
+        border: none;
+        transform: none;
         background-color: #e8ecf9c2;
         border-color: white;
     }
