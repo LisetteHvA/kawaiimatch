@@ -8,8 +8,13 @@
     text-align: center;
 }
 
+#pauseButton {
+    display: none;
+}
+
 body {
     min-height: 100vh;
+    max-height: 100vh;
     height: 100vh;
     background: rgb(255, 211, 218);
     background-image: url("../images/brand/background.png");
