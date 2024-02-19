@@ -351,7 +351,7 @@ function lostLife(reason) {
                     showInfoScreen("outOfTime");
                     break;
             }
-        } else {
+        } else if (lifes === 0) {
             showInfoScreen("gameOver");
         }
     }
