@@ -196,15 +196,13 @@ footer {
 /* BUTTON */
 
 button {
-    background: #d67983;
-    color: white;
     background:rgb(255, 211, 218);;
     color: #d67983;
-    padding: 15px;
     border-radius: 10px;
     font-size: 1.5em;
     border: 3px solid white;
-    margin-bottom: .8em;
+    padding: 15px;
+    margin: .8em 0;
 }
 
 button:hover {
@@ -265,9 +263,8 @@ button:hover {
         flex: 1 1 calc(33.33% - 10px); 
         max-width: calc(33.33% - 10px);
         height: auto;
-        max-width: 75px;
-        max-height: 75px;
-        margin: 5px;
+        max-width: 80px;
+        max-height: 80px;
     }
 
     .small-img {
@@ -276,10 +273,12 @@ button:hover {
 
     .tiny-img {
         max-width: 60px;
-        margin: 0;
     }
 
     footer {
         margin-top: auto;
+        position: absolute;
+        bottom: 0;
+        display: flex;
     }
 }
