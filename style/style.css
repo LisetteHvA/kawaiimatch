@@ -82,6 +82,7 @@ header section {
 
 header h1 img {
     width: 170px;
+    max-width: 170px;
 }
 
 header div {

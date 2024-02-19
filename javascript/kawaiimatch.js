@@ -417,7 +417,7 @@ function resetGameState() {
 
 // Show Element By ID --> Show: true/false
 function showElement(element, show) {
-    element.style.visibility = show ? "visible" : "hidden";
+    element.style.display = show ? "flex" : "none";
 }
 
 // Clears the content of an html element
