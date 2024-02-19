@@ -15,7 +15,6 @@
 body {
     min-height: 100vh;
     max-height: 100vh;
-    height: 100%;
     background: rgb(255, 211, 218);
     background-image: url("../images/brand/background.png");
     background-size: cover;
@@ -26,7 +25,7 @@ body {
 }
 
 main {
-    /*flex-grow: 1;*/
+    flex-grow: 1;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -63,13 +62,12 @@ img {
 /* HEADER */
 
 header {
-    background: #d67983a6;
-    color: white;
-    text-align: center;
-    padding: 0.8em;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    background: #d67983a6;
+    color: white;
+    padding: 0.8em;
 }
 
 header h1 {
@@ -84,6 +82,8 @@ header section {
 header h1 img {
     width: 170px;
     max-width: 170px;
+    display: flex;
+    align-items: center;
 }
 
 header div {
@@ -135,7 +135,7 @@ footer {
     color: white;
     width: 100%;
     padding: 0.5em;
-    /* margin-top: auto; /* check */
+    margin-top: auto;
 }
 
 /* GAME CONTAINER */
