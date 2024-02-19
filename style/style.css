@@ -170,6 +170,10 @@ footer {
     border-radius: 10px;
 }
 
+#pauseButton {
+    display: none;
+}
+
 /* INFO SCREEN */
 
 #infoScreen {
