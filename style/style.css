@@ -22,10 +22,11 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    align-content: space-between;
 }
 
 main {
-    flex-grow: 1;
+    /*flex-grow: 1;*/
     display: flex;
     justify-content: center;
     align-items: center;
@@ -134,7 +135,7 @@ footer {
     color: white;
     width: 100%;
     padding: 0.5em;
-    margin-top: auto; /* check */
+    /* margin-top: auto; /* check */
 }
 
 /* GAME CONTAINER */
