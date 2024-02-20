@@ -277,8 +277,5 @@ button:hover {
 
     footer {
         margin-top: auto;
-        position: absolute;
-        bottom: 0;
-        display: flex;
     }
 }
